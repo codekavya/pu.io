@@ -1,6 +1,6 @@
-const request = require("request");
+const request = require("./node_modules/request");
 const cheerio = require("cheerio");
-const htmlToMd = require("html-to-md");
+const htmlToMd = require("./node_modules/html-to-md");
 
 exports.getNotices = async (url, callback) => {
   request(url, async (error, response, html) => {
@@ -27,7 +27,7 @@ exports.getNoticeContent = async (url, callback) => {
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html);
-      const Entities = require("html-entities").AllHtmlEntities;
+      const Entities = require("./node_modules/html-entities").AllHtmlEntities;
 
       const entities = new Entities();
       $(".dpsp-share-text").remove();
@@ -57,7 +57,7 @@ exports.getNoticeContent = async (url, callback) => {
 
       return callback({
         title: title,
-        content: content.replace("Sharing is caring!", ""),
+        content: content,
         html: htmlData,
         markdown: markdown,
         images: images,
