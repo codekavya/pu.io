@@ -61,6 +61,15 @@ userSchema.methods.getToken = async function(){
      
    }
 
+   userSchema.methods.toJSON = function(){
+       const user = this;
+       const filteredObj = user.toObject();
+       delete filteredObj.Password;
+       delete filteredObj.tokens;
+       return filteredObj
+
+   }
+
    
 
 userSchema.statics.findByProvideInfo = async (Email,password)=>{
