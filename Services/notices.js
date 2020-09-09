@@ -62,7 +62,7 @@ exports.getNoticeContent = async (url, callback) => {
       const htmlData = entities.decode(htmlContent.html());
       // a loosely translated markdown format of data
       const markdown = htmlToMd(htmlData);
-
+      //calls callback function lol why you read this.
       return callback({
         title: title,
         content: content,
