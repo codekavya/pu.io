@@ -1,13 +1,12 @@
 const express = require("express");
-
-const mongoose = require("mongoose");
-
-const { mongoDbKey } = require("./config.json");
-
 const mainRoutes = require("./routes/mainRoutes");
-
+const adminRoutes = require("./routes/adminRoutes");
+require('./db/mongoose.js')
 const app = express();
+const port = 8080;
 
+
+app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -19,6 +18,9 @@ app.use((req, res, next) => {
 });
 
 app.use(mainRoutes);
+app.use(adminRoutes);
+
+
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -27,9 +29,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message });
 });
 
-mongoose
-  .connect(mongoDbKey)
-  .then((result) => {
-    app.listen(8080);
-  })
-  .catch((err) => console.log(err));
+app.listen(port,()=>{
+      console.log(`Listening to Port ${port}`)
+    });
+
