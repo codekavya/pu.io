@@ -1,13 +1,13 @@
 const express = require("express");
-const auth = require("../auth/auth")
+const validAPI = require("../auth/validAPI")
 
 const mainController = require("../controllers/mainController");
 
 const router = express.Router();
 
-router.get("/faculties", auth,mainController.getFaculties);
-router.get("/schoolsandcolleges",auth, mainController.getSchoolsandcolleges);
-router.get("/programs", auth,mainController.getPrograms);
+router.get("/faculties", validAPI,mainController.getFaculties);
+router.get("/schoolsandcolleges",validAPI, mainController.getSchoolsandcolleges);
+router.get("/programs", validAPI,mainController.getPrograms);
 
 
 module.exports = router;

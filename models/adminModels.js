@@ -4,7 +4,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
-// const {jwtsigninKey} =require("../config.json");
 const userSchema = new mongoose.Schema({
     Name:{
      type:String,
@@ -41,12 +40,22 @@ const userSchema = new mongoose.Schema({
                     throw new Error("Type Strong Password")
             }
     },
+
+    requestCount:{
+        type:Number,
+        default:0
+    },
+    apiKey:{
+        type:String,
+        default:null
+    
+  },
     tokens:[{
         token:{
             required:true,
             type:String
         }
-    }]
+    }],
     
 },{
     timestamps:true
@@ -60,12 +69,20 @@ userSchema.methods.getToken = async function(){
     return token;
      
    }
-
+   userSchema.methods.getAPIKEY = async function(){
+    const user = this;
+    const key = jwt.sign({Email:user.Email},"TECHG123");
+    user.apiKey = key;
+    await  user.save()
+    return key;
+     
+   }
    userSchema.methods.toJSON = function(){
        const user = this;
        const filteredObj = user.toObject();
        delete filteredObj.Password;
        delete filteredObj.tokens;
+       delete filteredObj.requestCount;
        return filteredObj
 
    }

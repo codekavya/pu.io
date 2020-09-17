@@ -2,9 +2,11 @@ const schoolsandcolleges = require("../models/schoolsandcolleges");
 const programs = require("../models/programs");
 const faculties = require("../models/faculties");
 
-exports.getPrograms = (req, res, next) => {
-  programs
-    .find()
+
+exports.getPrograms = async (req, res, next) => {
+  req.user.requestCount+=1;
+      await req.user.save();
+  program.find()
     .then((programs) => {
       res.status(200).json({
         programs: programs,
@@ -34,16 +36,13 @@ exports.getSchoolsandcolleges = (req, res, next) => {
     });
 };
 
-exports.getFaculties = (req, res, next) => {
-  faculties
-    .find()
-    .then((faculties) => {
-      res.status(200).json({ faculties: faculties });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+exports.getFaculties = async(req, res, next) => {
+  try {
+   const faculty =  await faculties.find({ })
+   const count = req.user.requestCount+=1;
+   await req.user.save();
+    res.send({ faculty,count });
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };

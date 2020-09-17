@@ -7,10 +7,6 @@
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/udemy-course-nodejs-complete"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {

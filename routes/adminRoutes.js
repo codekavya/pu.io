@@ -6,23 +6,24 @@ const updateUsers = require("../controllers/adminController").updateUsers;
 const postLogoutUsers = require("../controllers/adminController").postLogoutUsers; 
 const postUserSignIn = require("../controllers/adminController").postUserSignIn;
 const postLogoutAllSession = require("../controllers/adminController").postLogoutAllSession;
-
-const getOneUser = require("../controllers/adminController").getOneUser;
-
+const postreqForm = require("../controllers/adminController").reqForm;
+const getAPIKEY = require("../controllers/adminController").getAPIKEY;
+const generate = require("../auth/generateKey")
 
 const router = express.Router();
 
 router.post("/signin",postUserSignIn);
 router.post("/signup",postUserSignUp);
+router.post("/key",auth,generate,postreqForm)
 
 router.get("/user/me",auth,async(req,res)=>{
-    console.log("Req came"+req.header("Authorization"))
     res.send(req.user);  
 })
+router.get("/user/details",auth,getAPIKEY)
 router.post("user/logout",auth,postLogoutUsers)
 router.post("user/logout/all",auth,postLogoutAllSession)
 
-router.delete("/users/:id",deleteUsers);
+router.delete("/users/:id",auth,deleteUsers);
 router.patch('/users/:id',auth,updateUsers);
 
 

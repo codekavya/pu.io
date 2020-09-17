@@ -4,10 +4,8 @@ const auth = async(req,res,next)=>{
    try{
     const token = req.header('Authorization').replace("Bearer ","");
     const payload = jwt.verify(token,"thisisdemokey");
-    console.log(payload)
     const user = await Users.findOne({_id:payload._id , 'tokens.token':token});
     if(!user){
-        console.log("No user Found")
         throw new Error();
     }
     req.token = token
