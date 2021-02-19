@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-complete-guide",
+  "name": "pu.io",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,14 +7,11 @@
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
-<<<<<<< HEAD
-=======
   "repository": {
     "type": "git",
     "url": "https://github.com/codekavya/pu.io.git"
   },
->>>>>>> 183f89c87d0a6d8c0eaf6eeed6f53bf290cc3ec2
-  "author": "",
+  "author": "Code Kavya",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
