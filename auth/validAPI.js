@@ -2,7 +2,7 @@ const jwt= require('jsonwebtoken');
 const Users = require('../models/adminModels');
 const validAPI = async(req,res,next)=>{
    try{
-    const value = req.header('API_KEY');
+    const value = req.header('Cookie');
     const key = jwt.decode(value,"TECHG123");
     const user = await Users.findOne({Email:key.Email});
     if(!user){

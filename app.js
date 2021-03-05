@@ -3,7 +3,7 @@ const mainRoutes = require("./routes/mainRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 require('./db/mongoose.js')
 const app = express();
-const port = process.env.port || 8080;
+const port = process.env.port || 4000;
 
 
 app.use(express.json());

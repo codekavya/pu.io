@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
+
 const userSchema = new mongoose.Schema({
     Name:{
      type:String,
@@ -41,14 +42,18 @@ const userSchema = new mongoose.Schema({
             }
     },
 
-    requestCount:{
-        type:Number,
-        default:0
-    },
     apiKey:{
         type:String,
-        default:null
+        default:""
     
+  },
+  formAccepted:{
+      type:Boolean,
+      default:false
+  },
+  formRequested:{
+      type:Boolean,
+      default:false
   },
     tokens:[{
         token:{
@@ -61,6 +66,7 @@ const userSchema = new mongoose.Schema({
     timestamps:true
 });
 
+//Generate Token FOR ADMINISTRATIVE PURPOSE
 userSchema.methods.getToken = async function(){
     const user = this;
     const token = jwt.sign({ _id : user._id.toString()},"thisisdemokey");
@@ -69,7 +75,8 @@ userSchema.methods.getToken = async function(){
     return token;
      
    }
-   userSchema.methods.getAPIKEY = async function(){
+   userSchema.methods.generateAPIKEY = async function(){
+       console.log("Came here No Debugger attached")
     const user = this;
     const key = jwt.sign({Email:user.Email},"TECHG123");
     user.apiKey = key;
@@ -82,6 +89,8 @@ userSchema.methods.getToken = async function(){
        const filteredObj = user.toObject();
        delete filteredObj.Password;
        delete filteredObj.tokens;
+       delete filteredObj.formAccepted;
+       delete filteredObj.formRequested;
        delete filteredObj.requestCount;
        return filteredObj
 
@@ -98,6 +107,7 @@ userSchema.statics.findByProvideInfo = async (Email,password)=>{
         throw new Error("Invalid Email or Password")}
     return user;
 };
+
 
 
 

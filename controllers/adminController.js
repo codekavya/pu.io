@@ -1,17 +1,36 @@
+const limiter = require('express-rate-limit');
+
+
 const Users = require('../models/adminModels');
 const Forms = require('../models/form');
 
+const api_Key_Generator = require('../auth/generateKey')
+
+
+const limitForAccount = limiter({
+    windowMs:60*60*1000, //time limit in milisecond to rate limit
+    max:10, //max 100 request for each ip address within given windowsMs
+    message:'Sorry too many request try after some time'
+})
+
+exports.limitForAccount = limitForAccount;
+
+
 
 exports.postUserSignUp = async(req, res) => {
+    console.log(req.body);
     const user =  new Users(req.body)
+    await user.save();
  
     try{ 
         await user.save();
-        const token = await user.getToken();   
-        res.send({user,token})
+        res.send({'Account':user})
    
  }
- catch(E){res.send(E)}
+ catch(E){
+     res.send(E)
+
+    }
  
  };
   exports.postLogoutAllSession = async(req, res, next) => {
@@ -30,14 +49,21 @@ exports.postUserSignUp = async(req, res) => {
   exports.postUserSignIn = async(req,res)=>{  
     try{
     const user = await Users.findByProvideInfo(req.body.Email,req.body.Password)
-    const token=  user.getToken();   
-        res.send({user,token})
+    const token= await user.getToken();
+    res.set({
+            'Content-Type':'text/html',
+            'Set-Cookie':`SKey = Bearer ${token}`      
+    });  
+    res.send({user,token}) 
+    
     }catch(error){
         res.status(401).send({Error:"Error Logging",error})
     }
 }
+
+//Needed to be tested
 exports.getAPIKEY = async(req,res)=>{
-    const user = req.user;
+    const user = await User.findOne({})
     if(user.apiKey!=null){
        return res.status(404).send("No Key Found Try Sendig A Form or Wait for Response")
     }
@@ -45,32 +71,27 @@ exports.getAPIKEY = async(req,res)=>{
 
 }
 
-exports.reqForm = (req,res)=>{ 
-    var message = req.message;
-    console.log(message)
-         if(message===100){
-                const form = new Forms(req.body);
-                form.isRequested=true;
-                  form.save().then(function(response,error){
-                      if(response){
-                          res.status(208).send({"msg":"Under Validation"})
-                      }
-                  })
-            }
-    
-        else if(message===201|| message===101){
-            res.status(201).send({apiKey:req.user.apiKey})
-        }
-        else{
-            return res.status(208).send({"msg":"Under Validation"})
+/*This endpoint is responsible for posting the form and checking if
+the user has requested for the API Key 
+*/
 
-        }
-       
-       
+exports.apiHandler = async(req,res,next)=>{
+    if(req.user.apiKey){
+        res.status(200).send(req.user);
+
+    }else if(req){
+
+    }else{
+        res.redirect('/rkey')
     }
+}
+
+exports.postreqForm = async (req,res,next)=>{
+    api_Key_Generator(req,res,next);
+}
     
   
-   exports.deleteUsers = async (req, res, next)=>{
+   exports.deleteUser = async (req, res, next)=>{
       try {
           const usertoDelete = await Users.findByIdAndDelete(req.params.id);
           if(!usertoDelete){
@@ -84,7 +105,7 @@ exports.reqForm = (req,res)=>{
   };
 
  
-  exports.updateUsers = async(req,res,next)=>{
+  exports.updateUser = async(req,res,next)=>{
     const isallowed = ['Name', 'Password'];
     const entity = Object.keys(req.body);
     const isValid = entity.every(data => isallowed.includes(data));
