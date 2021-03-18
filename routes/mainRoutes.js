@@ -9,6 +9,11 @@ import {
   getPrograms,
   noticeController,
   categoryController,
+  getBuildings,
+  getContacts,
+  getClubs,
+  getSchedules,
+  getSyllabus,
 } from "../controllers/mainController.js";
 
 const router = Router();
@@ -20,6 +25,11 @@ router.get("/schoolsandcolleges", getSchoolsandcolleges);
 
 // router.get("/programs", auth, validAPI, getPrograms);
 router.get("/programs", getPrograms);
+router.get("/buildings", getBuildings);
+router.get("/clubs", getClubs);
+router.get("/syllabus", getSyllabus);
+router.get("/schedule", getSchedules);
+router.get("/contacts", getContacts);
 router.get("/notices/:category?", categoryController);
 
 router.post("/notice/", noticeController);
