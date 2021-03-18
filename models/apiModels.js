@@ -17,6 +17,10 @@ const apiCountsSchema = new Schema({
     type: Number,
     default: 0,
   },
+  DailyLimit: {
+    type: Number,
+    default: 100,
+  },
 });
 
 const apiCounts = model("apiCounts", apiCountsSchema);

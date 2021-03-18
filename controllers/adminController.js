@@ -5,15 +5,6 @@ import Forms from "../models/form.js";
 
 import api_Key_Generator from "../auth/generateKey.js";
 
-const limitForAccount = limiter({
-  windowMs: 60 * 60 * 1000, //time limit in milisecond to rate limit
-  max: 10000, //max 100 request for each ip address within given windowsMs
-  message: "Sorry too many request try after some time",
-});
-
-const _limitForAccount = limitForAccount;
-export { _limitForAccount as limitForAccount };
-
 export async function postUserSignUp(req, res) {
   console.log(req.body);
   const user = new Users(req.body);

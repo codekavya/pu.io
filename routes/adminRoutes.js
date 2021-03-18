@@ -9,15 +9,12 @@ import {
   postUserSignUp,
   postreqForm,
   getAPIKEY,
-  limitForAccount as limiter,
 } from "../controllers/adminController.js";
 import generate from "../auth/generateKey.js";
 
 const router = Router();
 
 const parser = urlencoded({ extended: false });
-
-router.use(limiter, parser);
 
 //Frontend endpoints only for Development
 router.get("/login", (req, res) => {

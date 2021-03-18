@@ -6,7 +6,7 @@ import clubsinfo from "../models/clubsinfo.js";
 import schedule from "../models/schedule.js";
 import building from "../models/buildings.js";
 import contact from "../models/contacts.js";
-
+import apiCounts from "../models/apiModels.js";
 import { getNotices, getNoticeContent } from "../Services/notices.js";
 
 export async function getPrograms(req, res, next) {
@@ -27,29 +27,38 @@ export async function getPrograms(req, res, next) {
     });
 }
 
-export function getSchoolsandcolleges(req, res, next) {
-  schoolsandcolleges
-    .find()
-    .then((sandc) => {
-      res.status(200).json({
-        School_and_Colleges: sandc,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+export async function getSchoolsandcolleges(req, res, next) {
+  try {
+    const schoolsandcollege = await schoolsandcolleges.find({});
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
+    await req.user.save();
+    res.send({ schoolsandcollege, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
 }
 
 export async function getFaculties(req, res, next) {
   try {
     const faculty = await faculties.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ faculty, count });
   } catch (error) {
@@ -61,10 +70,15 @@ export async function getFaculties(req, res, next) {
 export async function getContacts(req, res, next) {
   try {
     const contacts = await contact.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ contacts, count });
   } catch (error) {
@@ -76,10 +90,15 @@ export async function getContacts(req, res, next) {
 export async function getClubs(req, res, next) {
   try {
     const clubs = await clubsinfo.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ clubs, count });
   } catch (error) {
@@ -91,10 +110,15 @@ export async function getClubs(req, res, next) {
 export async function getSyllabus(req, res, next) {
   try {
     const sylllabuses = await syllabus.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ sylllabuses, count });
   } catch (error) {
@@ -106,10 +130,14 @@ export async function getSyllabus(req, res, next) {
 export async function getSchedules(req, res, next) {
   try {
     const schedules = await schedule.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ schedules, count });
   } catch (error) {
@@ -121,10 +149,15 @@ export async function getSchedules(req, res, next) {
 export async function getBuildings(req, res, next) {
   try {
     const buildings = await building.find({});
-    req.user.requestCount = req.user.requestCount
-      ? (req.user.requestCount += 1)
-      : 1;
-    const count = req.user.requestCount;
+    let count = null;
+    if (req.user.apiKey) {
+      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+      console.log({ api });
+      api.TodayHits = api.TodayHits + 1;
+      api.TotalHits = api.TotalHits + 1;
+      api.save();
+      count = api.TodayHits;
+    }
     await req.user.save();
     res.send({ buildings, count });
   } catch (error) {

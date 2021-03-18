@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 import Users from "../models/adminModels.js";
 import Forms from "../models/form.js";
+import apiCounts from "../models/apiModels.js";
 
 const gen = async (req, res, next) => {
   //Check if user is authenticated or not.
@@ -29,6 +30,8 @@ const gen = async (req, res, next) => {
 
   if (!key && user.formAccepted) {
     const generated_key = await user.generateAPIKEY();
+    const api = new apiCounts({ ApiKey: generated_key });
+    await api.save();
     //Send Through Headers APIKEY
     console.log(`API KEY : ${generated_key}`);
   }
