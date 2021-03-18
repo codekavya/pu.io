@@ -7,6 +7,8 @@ import schedule from "../models/schedule.js";
 import building from "../models/buildings.js";
 import contact from "../models/contacts.js";
 
+import { getNotices, getNoticeContent } from "../Services/notices.js"
+
 export async function getPrograms(req, res, next) {
   // req.user.requestCount += 1;
   // await req.user.save();
