@@ -1,6 +1,7 @@
 import schoolsandcolleges from "../models/schoolsandcolleges.js";
 import programs from "../models/programs.js";
 import faculties from "../models/faculties.js";
+import { getNotices, getNoticeContent } from "../services/notices.js";
 
 export async function getPrograms(req, res, next) {
   // req.user.requestCount += 1;
@@ -49,3 +50,31 @@ export async function getFaculties(req, res, next) {
     res.status(500).send(error);
   }
 }
+
+export async function noticeController(req, res) {
+  const { body } = req;
+  const { url } = body;
+  getNoticeContent(url, (notice) => {
+    // console.log(notice);
+    res.json({
+      timeStamp: Date.now(),
+      notice: notice,
+    });
+  });
+}
+
+
+export async function categoryController(req, res) {
+  const baseUrl = "https://pu.edu.np/";
+  const url = req.params.category
+    ? baseUrl + `noticetype/${req.params.category}`
+    : baseUrl + "notice";
+  console.log(url);
+  getNotices(url, (notices) => {
+    res.json({
+      timeStamp: Date.now(),
+      notices: notices,
+    });
+  });
+}
+
