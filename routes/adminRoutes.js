@@ -1,16 +1,17 @@
 import { Router, urlencoded } from "express";
 import auth from "../auth/auth.js";
-import { postUserSignUp } from "../controllers/adminController.js";
-import { deleteUser } from "../controllers/adminController.js";
-import { updateUser } from "../controllers/adminController.js";
-import { postLogoutUsers } from "../controllers/adminController.js";
-import { postUserSignIn } from "../controllers/adminController.js";
-import { postLogoutAllSession } from "../controllers/adminController.js";
-import { postreqForm } from "../controllers/adminController.js";
-import { getAPIKEY } from "../controllers/adminController.js";
+import {
+  deleteUser,
+  updateUser,
+  postLogoutUsers,
+  postUserSignIn,
+  postLogoutAllSession,
+  postUserSignUp,
+  postreqForm,
+  getAPIKEY,
+  limitForAccount as limiter,
+} from "../controllers/adminController.js";
 import generate from "../auth/generateKey.js";
-
-import { limitForAccount as limiter } from "../controllers/adminController.js";
 
 const router = Router();
 
