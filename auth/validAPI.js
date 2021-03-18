@@ -1,4 +1,5 @@
-import { decode } from "jsonwebtoken";
+import jsonwebtoken from "jsonwebtoken";
+const { decode } = jsonwebtoken;
 import Users from "../models/adminModels.js";
 const validAPI = async (req, res, next) => {
   try {
