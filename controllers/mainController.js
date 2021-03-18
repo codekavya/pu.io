@@ -1,13 +1,11 @@
 import schoolsandcolleges from "../models/schoolsandcolleges.js";
-const { find } = schoolsandcolleges;
 import programs from "../models/programs.js";
 import faculties from "../models/faculties.js";
-const { find: _find } = faculties;
 
 export async function getPrograms(req, res, next) {
-  req.user.requestCount += 1;
-  await req.user.save();
-  program
+  // req.user.requestCount += 1;
+  // await req.user.save();
+  programs
     .find()
     .then((programs) => {
       res.status(200).json({
@@ -23,7 +21,8 @@ export async function getPrograms(req, res, next) {
 }
 
 export function getSchoolsandcolleges(req, res, next) {
-  find()
+  schoolsandcolleges
+    .find()
     .then((sandc) => {
       res.status(200).json({
         School_and_Colleges: sandc,
@@ -39,11 +38,14 @@ export function getSchoolsandcolleges(req, res, next) {
 
 export async function getFaculties(req, res, next) {
   try {
-    const faculty = await _find({});
-    const count = (req.user.requestCount += 1);
-    await req.user.save();
+    const faculty = await faculties.find({});
+    console.log(faculty);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
     res.send({ faculty, count });
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 }

@@ -7,7 +7,7 @@ import api_Key_Generator from "../auth/generateKey.js";
 
 const limitForAccount = limiter({
   windowMs: 60 * 60 * 1000, //time limit in milisecond to rate limit
-  max: 10, //max 100 request for each ip address within given windowsMs
+  max: 10000, //max 100 request for each ip address within given windowsMs
   message: "Sorry too many request try after some time",
 });
 
@@ -46,7 +46,7 @@ export async function postUserSignIn(req, res) {
       "Content-Type": "text/html",
       "Set-Cookie": `SKey = Bearer ${token}`,
     });
-    res.send({ user, token });
+    res.json({ user, token });
   } catch (error) {
     res.status(401).send({ Error: "Error Logging", error });
   }

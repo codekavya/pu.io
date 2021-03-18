@@ -8,7 +8,9 @@ const auth = async (req, res, next) => {
     const token = req.header("Cookie").replace("SKey=Bearer ", "");
     console.log(token);
     const payload = verify(token, "thisisdemokey");
+    console.log(payload);
     const user = await findOne({ _id: payload._id, "tokens.token": token });
+    console.log(user);
     if (!user) {
       throw new Error();
     }
