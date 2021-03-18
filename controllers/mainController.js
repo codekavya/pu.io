@@ -1,12 +1,14 @@
-const schoolsandcolleges = require("../models/schoolsandcolleges");
-const programs = require("../models/programs");
-const faculties = require("../models/faculties");
+import schoolsandcolleges from "../models/schoolsandcolleges.js";
+const { find } = schoolsandcolleges;
+import programs from "../models/programs.js";
+import faculties from "../models/faculties.js";
+const { find: _find } = faculties;
 
-
-exports.getPrograms = async (req, res, next) => {
-  req.user.requestCount+=1;
-      await req.user.save();
-  program.find()
+export async function getPrograms(req, res, next) {
+  req.user.requestCount += 1;
+  await req.user.save();
+  program
+    .find()
     .then((programs) => {
       res.status(200).json({
         programs: programs,
@@ -18,11 +20,10 @@ exports.getPrograms = async (req, res, next) => {
       }
       next(err);
     });
-};
+}
 
-exports.getSchoolsandcolleges = (req, res, next) => {
-  schoolsandcolleges
-    .find()
+export function getSchoolsandcolleges(req, res, next) {
+  find()
     .then((sandc) => {
       res.status(200).json({
         School_and_Colleges: sandc,
@@ -34,15 +35,15 @@ exports.getSchoolsandcolleges = (req, res, next) => {
       }
       next(err);
     });
-};
+}
 
-exports.getFaculties = async(req, res, next) => {
+export async function getFaculties(req, res, next) {
   try {
-   const faculty =  await faculties.find({ })
-   const count = req.user.requestCount+=1;
-   await req.user.save();
-    res.send({ faculty,count });
+    const faculty = await _find({});
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
+    res.send({ faculty, count });
   } catch (error) {
     res.status(500).send(error);
   }
-};
+}

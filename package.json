@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "dev": "nodemon --experimental-json-modules app.js ",
+    "start": "node --experimental-json-modules app.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/codekavya/pu.io.git"
   },
   "author": "Code Kavya",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
