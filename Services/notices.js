@@ -1,6 +1,6 @@
-import request from "./node_modules/request";
+import request from "request";
 import { load } from "cheerio";
-import htmlToMd from "./node_modules/html-to-md";
+import htmlToMd from "html-to-md";
 
 export async function getNotices(url, callback) {
   request(url, async (error, response, html) => {
