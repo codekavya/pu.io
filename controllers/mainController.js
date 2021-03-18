@@ -46,7 +46,6 @@ export function getSchoolsandcolleges(req, res, next) {
 export async function getFaculties(req, res, next) {
   try {
     const faculty = await faculties.find({});
-    console.log(req.user.requestCount);
     req.user.requestCount = req.user.requestCount
       ? (req.user.requestCount += 1)
       : 1;
@@ -62,8 +61,10 @@ export async function getFaculties(req, res, next) {
 export async function getContacts(req, res, next) {
   try {
     const contacts = await contact.find({});
-    console.log(req.user.Email);
-    const count = (req.user.requestCount += 1);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
     await req.user.save();
     res.send({ contacts, count });
   } catch (error) {
@@ -75,7 +76,10 @@ export async function getContacts(req, res, next) {
 export async function getClubs(req, res, next) {
   try {
     const clubs = await clubsinfo.find({});
-    const count = (req.user.requestCount += 1);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
     await req.user.save();
     res.send({ clubs, count });
   } catch (error) {
@@ -87,7 +91,10 @@ export async function getClubs(req, res, next) {
 export async function getSyllabus(req, res, next) {
   try {
     const sylllabuses = await syllabus.find({});
-    const count = (req.user.requestCount += 1);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
     await req.user.save();
     res.send({ sylllabuses, count });
   } catch (error) {
@@ -99,7 +106,10 @@ export async function getSyllabus(req, res, next) {
 export async function getSchedules(req, res, next) {
   try {
     const schedules = await schedule.find({});
-    const count = (req.user.requestCount += 1);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
     await req.user.save();
     res.send({ schedules, count });
   } catch (error) {
@@ -111,7 +121,10 @@ export async function getSchedules(req, res, next) {
 export async function getBuildings(req, res, next) {
   try {
     const buildings = await building.find({});
-    const count = (req.user.requestCount += 1);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
     await req.user.save();
     res.send({ buildings, count });
   } catch (error) {
