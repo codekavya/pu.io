@@ -1,12 +1,11 @@
-const express = require("express");
-const mainRoutes = require("./routes/mainRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-require('./db/mongoose.js')
+import express, { json } from "express";
+import mainRoutes from "./routes/mainRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import "./db/mongoose.js";
 const app = express();
 const port = process.env.port || 4000;
 
-
-app.use(express.json());
+app.use(json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -20,8 +19,6 @@ app.use((req, res, next) => {
 app.use(mainRoutes);
 app.use(adminRoutes);
 
-
-
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -29,7 +26,6 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message });
 });
 
-app.listen(port,()=>{
-      console.log(`Listening to Port ${port}`)
-    });
-
+app.listen(port, () => {
+  console.log(`Listening to Port ${port}`);
+});

@@ -1,9 +1,7 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
+const { Schema: _Schema, model } = mongoose;
+const Schema = _Schema;
 
 const schoolsandcollegesSchema = new Schema();
 
-module.exports = mongoose.model(
-  "schools and colleges",
-  schoolsandcollegesSchema
-);
+export default model("schools and colleges", schoolsandcollegesSchema);
