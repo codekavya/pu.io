@@ -1,11 +1,11 @@
-const request = require("./node_modules/request");
-const cheerio = require("cheerio");
-const htmlToMd = require("./node_modules/html-to-md");
+import request from "./node_modules/request";
+import { load } from "cheerio";
+import htmlToMd from "./node_modules/html-to-md";
 
-exports.getNotices = async (url, callback) => {
+export async function getNotices(url, callback) {
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
-      const $ = cheerio.load(html);
+      const $ = load(html);
       var list = [];
       //loops through each cards in card-columns
       $(".card-columns > .card").each(function () {
@@ -22,11 +22,11 @@ exports.getNotices = async (url, callback) => {
       return callback(list);
     }
   });
-};
-exports.getNoticeContent = async (url, callback) => {
+}
+export async function getNoticeContent(url, callback) {
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
-      const $ = cheerio.load(html);
+      const $ = load(html);
       const Entities = require("./node_modules/html-entities").AllHtmlEntities;
       //removed share text and share buttons
       const entities = new Entities();
@@ -73,4 +73,4 @@ exports.getNoticeContent = async (url, callback) => {
       });
     }
   });
-};
+}
