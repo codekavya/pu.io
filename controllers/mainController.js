@@ -55,72 +55,28 @@ export async function getFaculties(req, res, next) {
   }
 }
 
-export async function getSyallabus(req, res, next) {
-  try {
-    const syllabus = await syllabus.find({});
-    console.log(syllabus);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
-    res.send({ syllabus, count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
+export async function noticeController(req, res) {
+  const { body } = req;
+  const { url } = body;
+  getNoticeContent(url, (notice) => {
+    // console.log(notice);
+    res.json({
+      timeStamp: Date.now(),
+      notice: notice,
+    });
+  });
 }
 
-export async function getClubs(req, res, next) {
-  try {
-    const clubs = await clubsinfo.find({});
-    console.log(clubs);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
-    res.send({ clubs, count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-}
-
-export async function getSchedule(req, res, next) {
-  try {
-    const schedule = await schedule.find({});
-    console.log(schedule);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
-    res.send({ schedule, count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-}
-
-export async function getBuildings(req, res, next) {
-  try {
-    const building = await buildings.find({});
-    console.log(building);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
-    res.send({ building, count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-}
-
-export async function getContacts(req, res, next) {
-  try {
-    const contacts = await contact.find({});
-    console.log(contacts);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
-    res.send({ contacts, count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
+export async function categoryController(req, res) {
+  const baseUrl = "https://pu.edu.np/";
+  const url = req.params.category
+    ? baseUrl + `noticetype/${req.params.category}`
+    : baseUrl + "notice";
+  console.log(url);
+  getNotices(url, (notices) => {
+    res.json({
+      timeStamp: Date.now(),
+      notices: notices,
+    });
+  });
 }
