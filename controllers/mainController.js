@@ -31,9 +31,10 @@ export async function getSchoolsandcolleges(req, res, next) {
   try {
     const schoolsandcollege = await schoolsandcolleges.find({});
     let count = null;
-    if (req.user.apiKey) {
+    console.log(req.api);
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
+      // console.log({ api });
       api.TodayHits = api.TodayHits + 1;
       api.TotalHits = api.TotalHits + 1;
       api.save();
@@ -51,7 +52,7 @@ export async function getFaculties(req, res, next) {
   try {
     const faculty = await faculties.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       console.log({ api });
       api.TodayHits = api.TodayHits + 1;
@@ -71,7 +72,7 @@ export async function getContacts(req, res, next) {
   try {
     const contacts = await contact.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       console.log({ api });
       api.TodayHits = api.TodayHits + 1;
@@ -91,7 +92,7 @@ export async function getClubs(req, res, next) {
   try {
     const clubs = await clubsinfo.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       console.log({ api });
       api.TodayHits = api.TodayHits + 1;
@@ -111,7 +112,7 @@ export async function getSyllabus(req, res, next) {
   try {
     const sylllabuses = await syllabus.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       console.log({ api });
       api.TodayHits = api.TodayHits + 1;
@@ -131,7 +132,7 @@ export async function getSchedules(req, res, next) {
   try {
     const schedules = await schedule.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       api.TodayHits = api.TodayHits + 1;
       api.TotalHits = api.TotalHits + 1;
@@ -150,7 +151,7 @@ export async function getBuildings(req, res, next) {
   try {
     const buildings = await building.find({});
     let count = null;
-    if (req.user.apiKey) {
+    if (req.user.apiKey && req.api) {
       const api = await apiCounts.findOne({ Apikey: req.user.apikey });
       console.log({ api });
       api.TodayHits = api.TodayHits + 1;
@@ -169,11 +170,22 @@ export async function getBuildings(req, res, next) {
 export async function noticeController(req, res) {
   const { body } = req;
   const { url } = body;
+  let count = null;
+  if (req.user.apiKey && req.api) {
+    const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+    console.log({ api });
+    api.TodayHits = api.TodayHits + 1;
+    api.TotalHits = api.TotalHits + 1;
+    api.save();
+    count = api.TodayHits;
+  }
+  await req.user.save();
   getNoticeContent(url, (notice) => {
     // console.log(notice);
     res.json({
       timeStamp: Date.now(),
       notice: notice,
+      count,
     });
   });
 }
@@ -184,10 +196,21 @@ export async function categoryController(req, res) {
     ? baseUrl + `noticetype/${req.params.category}`
     : baseUrl + "notice";
   console.log(url);
+  let count = null;
+  if (req.user.apiKey && req.api) {
+    const api = await apiCounts.findOne({ Apikey: req.user.apikey });
+    console.log({ api });
+    api.TodayHits = api.TodayHits + 1;
+    api.TotalHits = api.TotalHits + 1;
+    api.save();
+    count = api.TodayHits;
+  }
+  await req.user.save();
   getNotices(url, (notices) => {
     res.json({
       timeStamp: Date.now(),
       notices: notices,
+      count,
     });
   });
 }
