@@ -1,14 +1,13 @@
-const mongoose = require('mongoose');
-const {
-  mongoDbKey
-} = require("../config.json")
+import mongoose from "mongoose";
+const { connect } = mongoose;
+import config from "../config.js";
+const { mongoDbKey } = config;
 
-
-  mongoose.connect(mongoDbKey, {
+connect(mongoDbKey, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
-  useCreateIndex: true
-}).catch(e=>{
-  console.log("Network Problem")
+  useCreateIndex: true,
+}).catch((e) => {
+  console.log("Network Problem");
 });

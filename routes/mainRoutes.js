@@ -1,14 +1,32 @@
-const express = require("express");
-const validAPI = require("../auth/validAPI")
-const auth = require('../auth/auth')
+import express from "express";
+const { Router } = express;
+import validAPI from "../auth/validAPI.js";
+import auth from "../auth/auth.js";
 
-const mainController = require("../controllers/mainController");
+import {
+  getFaculties,
+  getSchoolsandcolleges,
+  getPrograms,
+  noticeController,
+  categoryController,
+  getBuildings,
+  getContacts,
+  getClubs,
+  getSchedules,
+  getSyllabus,
+} from "../controllers/mainController.js";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/faculties", auth,validAPI,mainController.getFaculties);
-router.get("/schoolsandcolleges",auth,validAPI,mainController.getSchoolsandcolleges);
-router.get("/programs", auth,validAPI,mainController.getPrograms);
+router.get("/faculties", auth, getFaculties);
+router.get("/schoolsandcolleges", auth, getSchoolsandcolleges);
+router.get("/programs", auth, getPrograms);
+router.get("/buildings", auth, getBuildings);
+router.get("/clubs", auth, getClubs);
+router.get("/syllabus", auth, getSyllabus);
+router.get("/schedule", auth, getSchedules);
+router.get("/contacts", auth, getContacts);
+router.get("/notices/:category?", auth, categoryController);
+router.post("/notice/", auth, noticeController);
 
-
-module.exports = router;
+export default router;

@@ -1,7 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
+const { Schema: _Schema, model } = mongoose;
+const Schema = _Schema;
 
 const facultiesSchema = new Schema();
-const faculty = mongoose.model("faculties", facultiesSchema);
+const faculty = model("faculties", facultiesSchema);
 
-module.exports =faculty
+export default faculty;
