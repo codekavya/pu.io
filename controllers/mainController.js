@@ -4,7 +4,7 @@ import faculties from "../models/faculties.js";
 import syllabus from "../models/syllabus.js";
 import clubsinfo from "../models/clubsinfo.js";
 import schedule from "../models/schedule.js";
-import buildings from "../models/buildings.js";
+import building from "../models/buildings.js";
 import contact from "../models/contacts.js";
 
 export async function getPrograms(req, res, next) {
@@ -49,6 +49,76 @@ export async function getFaculties(req, res, next) {
     // await req.user.save();
     const count = 1;
     res.send({ faculty, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getContacts(req, res, next) {
+  try {
+    const contacts = await contact.find({});
+    console.log(contacts);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
+    res.send({ contacts, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getClubs(req, res, next) {
+  try {
+    const clubs = await clubsinfo.find({});
+    console.log(clubs);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
+    res.send({ clubs, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getSyllabus(req, res, next) {
+  try {
+    const sylllabuses = await syllabus.find({});
+    console.log(sylllabuses);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
+    res.send({ sylllabuses, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getSchedules(req, res, next) {
+  try {
+    const schedules = await schedule.find({});
+    console.log(schedules);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
+    res.send({ schedules, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getBuildings(req, res, next) {
+  try {
+    const buildings = await building.find({});
+    console.log(buildings);
+    // const count = (req.user.requestCount += 1);
+    // await req.user.save();
+    const count = 1;
+    res.send({ buildings, count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
