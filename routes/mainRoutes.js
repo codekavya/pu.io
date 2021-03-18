@@ -18,20 +18,15 @@ import {
 
 const router = Router();
 
-// router.get("/faculties", auth, validAPI, getFaculties);
-router.get("/faculties", getFaculties);
-// router.get("/schoolsandcolleges", auth, validAPI, getSchoolsandcolleges);
-router.get("/schoolsandcolleges", getSchoolsandcolleges);
-
-// router.get("/programs", auth, validAPI, getPrograms);
-router.get("/programs", getPrograms);
-router.get("/buildings", getBuildings);
-router.get("/clubs", getClubs);
-router.get("/syllabus", getSyllabus);
-router.get("/schedule", getSchedules);
-router.get("/contacts", getContacts);
-router.get("/notices/:category?", categoryController);
-
-router.post("/notice/", noticeController);
+router.get("/faculties", auth, getFaculties);
+router.get("/schoolsandcolleges", auth, getSchoolsandcolleges);
+router.get("/programs", auth, getPrograms);
+router.get("/buildings", auth, getBuildings);
+router.get("/clubs", auth, getClubs);
+router.get("/syllabus", auth, getSyllabus);
+router.get("/schedule", auth, getSchedules);
+router.get("/contacts", auth, getContacts);
+router.get("/notices/:category?", auth, categoryController);
+router.post("/notice/", auth, noticeController);
 
 export default router;

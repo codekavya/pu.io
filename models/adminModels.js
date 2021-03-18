@@ -24,6 +24,11 @@ const userSchema = new Schema(
         }
       },
     },
+    requestCount: {
+      type: Number,
+      trim: true,
+      required: [false],
+    },
     Email: {
       type: String,
       trim: true,

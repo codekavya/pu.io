@@ -7,11 +7,11 @@ import schedule from "../models/schedule.js";
 import building from "../models/buildings.js";
 import contact from "../models/contacts.js";
 
-import { getNotices, getNoticeContent } from "../Services/notices.js"
+import { getNotices, getNoticeContent } from "../Services/notices.js";
 
 export async function getPrograms(req, res, next) {
-  // req.user.requestCount += 1;
-  // await req.user.save();
+  req.user.requestCount += 1;
+  await req.user.save();
   programs
     .find()
     .then((programs) => {
@@ -46,10 +46,12 @@ export function getSchoolsandcolleges(req, res, next) {
 export async function getFaculties(req, res, next) {
   try {
     const faculty = await faculties.find({});
-    console.log(faculty);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    console.log(req.user.requestCount);
+    req.user.requestCount = req.user.requestCount
+      ? (req.user.requestCount += 1)
+      : 1;
+    const count = req.user.requestCount;
+    await req.user.save();
     res.send({ faculty, count });
   } catch (error) {
     console.log(error);
@@ -60,10 +62,9 @@ export async function getFaculties(req, res, next) {
 export async function getContacts(req, res, next) {
   try {
     const contacts = await contact.find({});
-    console.log(contacts);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    console.log(req.user.Email);
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
     res.send({ contacts, count });
   } catch (error) {
     console.log(error);
@@ -74,10 +75,8 @@ export async function getContacts(req, res, next) {
 export async function getClubs(req, res, next) {
   try {
     const clubs = await clubsinfo.find({});
-    console.log(clubs);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
     res.send({ clubs, count });
   } catch (error) {
     console.log(error);
@@ -88,10 +87,8 @@ export async function getClubs(req, res, next) {
 export async function getSyllabus(req, res, next) {
   try {
     const sylllabuses = await syllabus.find({});
-    console.log(sylllabuses);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
     res.send({ sylllabuses, count });
   } catch (error) {
     console.log(error);
@@ -102,10 +99,8 @@ export async function getSyllabus(req, res, next) {
 export async function getSchedules(req, res, next) {
   try {
     const schedules = await schedule.find({});
-    console.log(schedules);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
     res.send({ schedules, count });
   } catch (error) {
     console.log(error);
@@ -116,10 +111,8 @@ export async function getSchedules(req, res, next) {
 export async function getBuildings(req, res, next) {
   try {
     const buildings = await building.find({});
-    console.log(buildings);
-    // const count = (req.user.requestCount += 1);
-    // await req.user.save();
-    const count = 1;
+    const count = (req.user.requestCount += 1);
+    await req.user.save();
     res.send({ buildings, count });
   } catch (error) {
     console.log(error);
