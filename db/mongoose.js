@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const { connect } = mongoose;
-import config from "../config.json";
+import config from "../config.js";
 const { mongoDbKey } = config;
 
 connect(mongoDbKey, {
