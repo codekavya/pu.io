@@ -1,6 +1,4 @@
-import { Router } from "express";
-import bodyParser from "body-parser";
-const { urlencoded } = bodyParser;
+import { Router, urlencoded } from "express";
 import auth from "../auth/auth.js";
 import { postUserSignUp } from "../controllers/adminController.js";
 import { deleteUser } from "../controllers/adminController.js";
