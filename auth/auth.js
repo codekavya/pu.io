@@ -37,6 +37,10 @@ const auth = async (req, res, next) => {
           .status(429)
           .send({ Error: "You have reached your daily API usage limit" });
       } else {
+        api.TodayHits = api.TodayHits + 1;
+        api.TotalHits = api.TotalHits + 1;
+        await api.save();
+        req.count = api.TodayHits;
         req.api = value;
         req.user = user;
         next();

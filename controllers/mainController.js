@@ -12,18 +12,7 @@ import { getNotices, getNoticeContent } from "../Services/notices.js";
 export async function getPrograms(req, res, next) {
   try {
     const programList = await programs.find({});
-    let count = null;
-    console.log(req.api);
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      // console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ programList, count });
+    res.send({ programList, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -32,18 +21,7 @@ export async function getPrograms(req, res, next) {
 export async function getSchoolsandcolleges(req, res, next) {
   try {
     const schoolsandcollege = await schoolsandcolleges.find({});
-    let count = null;
-    console.log(req.api);
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      // console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ schoolsandcollege, count });
+    res.send({ schoolsandcollege, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -53,17 +31,7 @@ export async function getSchoolsandcolleges(req, res, next) {
 export async function getFaculties(req, res, next) {
   try {
     const faculty = await faculties.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ faculty, count });
+    res.send({ faculty, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -73,17 +41,7 @@ export async function getFaculties(req, res, next) {
 export async function getContacts(req, res, next) {
   try {
     const contacts = await contact.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ contacts, count });
+    res.send({ contacts, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -93,17 +51,7 @@ export async function getContacts(req, res, next) {
 export async function getClubs(req, res, next) {
   try {
     const clubs = await clubsinfo.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ clubs, count });
+    res.send({ clubs, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -113,17 +61,7 @@ export async function getClubs(req, res, next) {
 export async function getSyllabus(req, res, next) {
   try {
     const sylllabuses = await syllabus.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ sylllabuses, count });
+    res.send({ sylllabuses, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -133,16 +71,7 @@ export async function getSyllabus(req, res, next) {
 export async function getSchedules(req, res, next) {
   try {
     const schedules = await schedule.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ schedules, count });
+    res.send({ schedules, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -152,17 +81,7 @@ export async function getSchedules(req, res, next) {
 export async function getBuildings(req, res, next) {
   try {
     const buildings = await building.find({});
-    let count = null;
-    if (req.user.apiKey && req.api) {
-      const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-      console.log({ api });
-      api.TodayHits = api.TodayHits + 1;
-      api.TotalHits = api.TotalHits + 1;
-      api.save();
-      count = api.TodayHits;
-    }
-    await req.user.save();
-    res.send({ buildings, count });
+    res.send({ buildings, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -172,22 +91,13 @@ export async function getBuildings(req, res, next) {
 export async function noticeController(req, res) {
   const { body } = req;
   const { url } = body;
-  let count = null;
-  if (req.user.apiKey && req.api) {
-    const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-    console.log({ api });
-    api.TodayHits = api.TodayHits + 1;
-    api.TotalHits = api.TotalHits + 1;
-    api.save();
-    count = api.TodayHits;
-  }
   await req.user.save();
   getNoticeContent(url, (notice) => {
     // console.log(notice);
     res.json({
       timeStamp: Date.now(),
       notice: notice,
-      count,
+      count: req.count,
     });
   });
 }
@@ -198,21 +108,11 @@ export async function categoryController(req, res) {
     ? baseUrl + `noticetype/${req.params.category}`
     : baseUrl + "notice";
   console.log(url);
-  let count = null;
-  if (req.user.apiKey && req.api) {
-    const api = await apiCounts.findOne({ Apikey: req.user.apikey });
-    console.log({ api });
-    api.TodayHits = api.TodayHits + 1;
-    api.TotalHits = api.TotalHits + 1;
-    api.save();
-    count = api.TodayHits;
-  }
-  await req.user.save();
   getNotices(url, (notices) => {
     res.json({
       timeStamp: Date.now(),
       notices: notices,
-      count,
+      count: req.count,
     });
   });
 }

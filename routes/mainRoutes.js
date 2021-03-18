@@ -1,6 +1,5 @@
 import express from "express";
 const { Router } = express;
-import validAPI from "../auth/validAPI.js";
 import auth from "../auth/auth.js";
 
 import {
