@@ -7,7 +7,7 @@ import buildingsController from "../controllers/mainControllers/buildingsControl
 import clubsController from "../controllers/mainControllers/clubsController.js";
 import contactsController from "../controllers/mainControllers/contactsController.js";
 import schedulesController from "../controllers/mainControllers/schedulesController.js";
-// import noticesController from "../controllers/mainControllers/noticesController.js";
+import noticesController from "../controllers/mainControllers/noticesController.js";
 import programsController from "../controllers/mainControllers/programsController.js";
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
 
@@ -27,7 +27,6 @@ router.use("/syllabus", auth, syllabusController);
 router.use("/schedules", auth, schedulesController);
 router.use("/contacts", auth, contactsController);
 
-router.get("/notices/:category?", auth, categoryController);
-router.post("/notice", auth, noticeController);
+router.use("/notices", auth, noticesController);
 
 export default router;

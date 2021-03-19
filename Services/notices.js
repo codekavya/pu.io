@@ -1,6 +1,7 @@
 import request from "request";
 import { load } from "cheerio";
 import htmlToMd from "html-to-md";
+import { AllHtmlEntities as Entities } from "html-entities";
 
 export async function getNotices(url, callback) {
   request(url, async (error, response, html) => {
@@ -27,7 +28,6 @@ export async function getNoticeContent(url, callback) {
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
       const $ = load(html);
-      const Entities = require("./node_modules/html-entities").AllHtmlEntities;
       //removed share text and share buttons
       const entities = new Entities();
       $(".dpsp-share-text").remove();
