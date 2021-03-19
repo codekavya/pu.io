@@ -32,7 +32,7 @@ export async function postUserSignIn(req, res) {
     );
     const token = await user.getToken();
     res.set({
-      "Content-Type": "text/html",
+      "Content-Type": "application/json",
       "Set-Cookie": `SKey = Bearer ${token}`,
     });
     res.json({ user, token });

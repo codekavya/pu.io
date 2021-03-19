@@ -1,12 +1,10 @@
 import schoolsandcolleges from "../models/schoolsandcolleges.js";
 import programs from "../models/programs.js";
-import faculties from "../models/faculties.js";
 import syllabus from "../models/syllabus.js";
 import clubsinfo from "../models/clubsinfo.js";
 import schedule from "../models/schedule.js";
 import building from "../models/buildings.js";
 import contact from "../models/contacts.js";
-import apiCounts from "../models/apiModels.js";
 import { getNotices, getNoticeContent } from "../Services/notices.js";
 
 export async function getPrograms(req, res, next) {
@@ -23,17 +21,6 @@ export async function getSchoolsandcolleges(req, res, next) {
     const schoolsandcollege = await schoolsandcolleges.find({});
     res.send({ schoolsandcollege, count: req.count });
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-}
-
-export async function getFaculties(req, res, next) {
-  try {
-    const faculty = await faculties.find({});
-    res.send({ faculty, count: req.count });
-  } catch (error) {
-    console.log(error);
     res.status(500).send(error);
   }
 }
