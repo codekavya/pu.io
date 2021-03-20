@@ -10,11 +10,11 @@ import {
   postreqForm,
   getAPIKEY,
 } from "../controllers/adminController.js";
-import generate from "../auth/generateKey.js";
+import formHandler from "../auth/apiFormHandler.js";
 
 const router = Router();
 
-router.use(urlencoded({extended:false}))
+router.use(urlencoded({ extended: false }));
 
 //Frontend endpoints only for Development
 router.get("/login", (req, res) => {
@@ -22,18 +22,17 @@ router.get("/login", (req, res) => {
     '<form action="/signin" method="POST"><input type="email" name="Email" id="Email"><input type="password" name="Password" id="pwd"><button type="submit">Send</button></form>'
   );
 });
-router.get("/form",(req, res, next) => {
+router.get("/form", (req, res, next) => {
   res.send(
     '<form action="/signup" method="POST">Name:<input type="text" name="Name"><br>Age:<input type="number" name="Age"><br>Email:<input type="Email" name="Email"><br>Password:<input type="password" name="Password"><button type="submit">Send</button></form>'
   );
 });
 
-
 router.post("/signup", postUserSignUp);
 
 router.get("/key", auth, getAPIKEY);
 
-router.post("/key", auth, generate);
+router.post("/key", auth, formHandler);
 
 router.post("/signin", postUserSignIn);
 
