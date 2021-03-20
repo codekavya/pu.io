@@ -2,6 +2,8 @@ import express from "express";
 const { Router } = express;
 
 import auth from "../auth/auth.js";
+import checkRole from "../auth/checkRole.js";
+
 import facultiesController from "../controllers/mainControllers/facultiesController.js";
 import schoolsController from "../controllers/mainControllers/schoolsController.js";
 import buildingsController from "../controllers/mainControllers/buildingsController.js";
@@ -24,4 +26,7 @@ router.use("/schedules", auth, schedulesController);
 router.use("/contacts", auth, contactsController);
 router.use("/notices", auth, noticesController);
 
+router.get("/check", auth, checkRole(["role.classadmin"]), (req, res) =>
+  res.send("Hehe noice program")
+);
 export default router;
