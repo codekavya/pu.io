@@ -18,9 +18,10 @@ export async function noticeController(req, res) {
 
 export async function categoryController(req, res) {
   const baseUrl = "https://pu.edu.np/";
-  const url = req.params.category
-    ? baseUrl + `noticetype/${req.params.category}`
-    : baseUrl + "notice";
+  const url =
+    req.params.category !== "all" && req.params.category
+      ? baseUrl + `noticetype/${req.params.category}`
+      : baseUrl + "notice";
   console.log(url);
   getNotices(url, (notices) => {
     res.json({
@@ -31,5 +32,6 @@ export async function categoryController(req, res) {
   });
 }
 router.post("/", noticeController);
+router.get("/", categoryController);
 router.get("/:category", categoryController);
 export default router;
