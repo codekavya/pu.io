@@ -10,12 +10,6 @@ import schedulesController from "../controllers/mainControllers/schedulesControl
 import noticesController from "../controllers/mainControllers/noticesController.js";
 import programsController from "../controllers/mainControllers/programsController.js";
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
-
-import {
-  noticeController,
-  categoryController,
-} from "../controllers/mainController.js";
-
 const router = Router();
 
 router.use("/faculties", auth, facultiesController);
@@ -26,7 +20,6 @@ router.use("/clubs", auth, clubsController);
 router.use("/syllabus", auth, syllabusController);
 router.use("/schedules", auth, schedulesController);
 router.use("/contacts", auth, contactsController);
-
 router.use("/notices", auth, noticesController);
 
 export default router;
