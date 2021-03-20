@@ -25,4 +25,5 @@ export async function getSchedule(req, res) {
 router.get("/", getSchedules);
 router.get("/:id", getSchedule);
 
+
 export default router;

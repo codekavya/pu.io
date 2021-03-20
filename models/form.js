@@ -42,6 +42,15 @@ const userSchema = new Schema(
       default: true,
     },
 
+    userName:{
+      type:String,
+      required:true
+    },
+    userID:{
+      type:String,
+      required:true
+    },
+
     accepted: {
       type: Boolean,
       default: false,

@@ -2,9 +2,7 @@ import jsonwebtoken from "jsonwebtoken";
 const { verify, decode } = jsonwebtoken;
 import adminModels from "../models/adminModels.js";
 import apiCounts from "../models/apiModels.js";
-// const { findOne } = adminModels;
 
-//import { spliter } from "../Utils/__cookies__extracter.js";
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Cookie").replace("SKey=Bearer ", "");

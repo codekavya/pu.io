@@ -25,4 +25,5 @@ export async function getContact(req, res) {
 router.get("/", getContacts);
 router.get("/:id", getContact);
 
+
 export default router;

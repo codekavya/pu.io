@@ -52,6 +52,7 @@ const userSchema = new Schema(
     apiKey: {
       type: String,
       default: "",
+      unique:true
     },
     formAccepted: {
       type: Boolean,
@@ -61,6 +62,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+
     tokens: [
       {
         token: {
@@ -69,7 +71,17 @@ const userSchema = new Schema(
         },
       },
     ],
+    roles: [
+      {
+        role: {
+          required: false,
+          type: String,
+        },
+      },
+    ],
   },
+
+
   {
     timestamps: true,
   }

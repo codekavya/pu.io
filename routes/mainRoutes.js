@@ -1,5 +1,6 @@
 import express from "express";
 const { Router } = express;
+
 import auth from "../auth/auth.js";
 import facultiesController from "../controllers/mainControllers/facultiesController.js";
 import schoolsController from "../controllers/mainControllers/schoolsController.js";
@@ -10,6 +11,7 @@ import schedulesController from "../controllers/mainControllers/schedulesControl
 import noticesController from "../controllers/mainControllers/noticesController.js";
 import programsController from "../controllers/mainControllers/programsController.js";
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
+
 const router = Router();
 
 router.use("/faculties", auth, facultiesController);

@@ -21,6 +21,15 @@ const apiCountsSchema = new Schema({
     type: Number,
     default: 100,
   },
+  userName:{
+    type:String,
+    required:true
+  },
+  userID:{
+    type:String,
+    required:true
+    
+  }
 });
 
 const apiCounts = model("apiCounts", apiCountsSchema);
