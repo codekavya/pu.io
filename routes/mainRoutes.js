@@ -27,6 +27,6 @@ router.use("/contacts", auth, contactsController);
 router.use("/notices", auth, noticesController);
 
 router.get("/check", auth, checkRole(["role.classadmin"]), (req, res) =>
-  res.send("Hehe noice program")
+    res.send("Hehe noice program")
 );
 export default router;

@@ -22,7 +22,48 @@ export async function getSyllabus(req, res) {
     res.status(500).send(error);
   }
 }
+
+export async function createSyllabus(req, res) {
+  const syllabus = new syllabuses(req.body);
+
+
+  try {
+    await syllabus.save();
+    res.send({ syllabus });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function deleteSyllabuses(req, res) {
+  try {
+    const syllabus = await syllabuses.findByIdAndDelete(req.params.id);
+
+    if (!syllabus) res.status(404).send("No items Found");
+    res.send({ "message": "Syllabus deleted" });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function updateSyllabuses(req, res) {
+  try {
+    await syllabuses.findByIdAndUpdate(req.params.id, req.body);
+    const syllabus = await syllabuses.findOne({ _id: req.params.id });;
+
+    res.send({ syllabus });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
 router.get("/", getSyllabuses);
 router.get("/:id", getSyllabus);
+
+router.post("/", getSyllabus);
+router.patch("/:id", updateSyllabuses);
+router.delete("/:id", deleteSyllabuses);
 
 export default router;

@@ -22,8 +22,47 @@ export async function getContact(req, res) {
     res.status(500).send(error);
   }
 }
+
+export async function createContact(req, res) {
+  const contact = new contacts(req.body);
+  try {
+    await contact.save();
+    res.send({ contact });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function deleteContact(req, res) {
+  try {
+    const contact = await contacts.findByIdAndDelete(req.params.id);
+
+    if (!contact) res.status(404).send("No items Found");
+    res.send({ "message": "contact deleted" });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function updateContact(req, res) {
+  try {
+    await contacts.findByIdAndUpdate(req.params.id, req.body);
+    const contact = await contacts.findOne({ _id: req.params.id });;
+
+    res.send({ contact });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
 router.get("/", getContacts);
 router.get("/:id", getContact);
+
+router.post("/", createContact);
+router.patch("/:id", updateContact);
+router.delete("/:id", deleteContact);
 
 
 export default router;
