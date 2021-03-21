@@ -3,11 +3,11 @@ const authenticateRole = (roles) => (req, res, next) => {
     return res.status(401).json({ Error: "Unable to Authorize" });
   }
   console.log(req.user.roles);
-  if (req.user.roles.some((role) => role.role === "role.superAdmin")) {
+  if (req.user.roles.some((role) => role === "role.superAdmin")) {
     return next();
   }
   const authorized = req.user.roles.some((userrole) =>
-    roles.some((role) => userrole.role === role)
+    roles.some((role) => userrole === role)
   );
   if (authorized) {
     return next();

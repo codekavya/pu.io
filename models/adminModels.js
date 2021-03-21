@@ -29,6 +29,10 @@ const userSchema = new Schema(
       trim: true,
       required: [false],
     },
+    college: {
+      type: String,
+      required: false,
+    },
     Email: {
       type: String,
       trim: true,
@@ -52,7 +56,7 @@ const userSchema = new Schema(
     apiKey: {
       type: String,
       default: "",
-      unique:true
+      unique: true,
     },
     formAccepted: {
       type: Boolean,
@@ -73,14 +77,11 @@ const userSchema = new Schema(
     ],
     roles: [
       {
-        role: {
-          required: false,
-          type: String,
-        },
+        type: String,
+        required: false,
       },
     ],
   },
-
 
   {
     timestamps: true,
