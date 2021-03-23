@@ -7,12 +7,10 @@ const auth = (type = "") => async (req, res, next) => {
   try {
     const token = req.header("Cookie").replace("SKey=Bearer ", "");
     const payload = verify(token, "thisisdemokey");
-    console.log(payload);
     const user = await adminModels.findOne({
       _id: payload._id,
       "tokens.token": token,
     });
-    console.log(user);
     if (!user) {
       throw new Error();
     }
@@ -49,7 +47,7 @@ const auth = (type = "") => async (req, res, next) => {
         });
       }
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       res.send({ Error: "Unable to Authorize" });
     }
   }

@@ -49,6 +49,17 @@ export async function createClassroomNotice(req, res) {
 }
 export async function deleteClassroomNotice(req, res) {
   try {
+    const noticeToBeDeleted = await classroomNotices.findOne({
+      _id: req.params.id,
+    });
+    if (
+      !req.roles.includes("role.superAdmin") &&
+      noticeToBeDeleted.classroomId != req.user.classroom
+    ) {
+      return res
+        .status(401)
+        .send({ Error: "You cannot delete notice from other classrooms" });
+    }
     const classroomNotice = await classroomNotices.findByIdAndDelete(
       req.params.id
     );
@@ -62,7 +73,19 @@ export async function deleteClassroomNotice(req, res) {
 }
 export async function updateClassroomNotice(req, res) {
   try {
+    const noticeToBeUpdated = await lassroomNotices.find({
+      _id: req.params.id,
+    });
+    if (
+      !req.roles.includes("role.superAdmin") &&
+      noticeToBeUpdated.classroomId != req.user.classroom
+    ) {
+      return res
+        .status(401)
+        .send({ Error: "You cannot edit notice from other classrooms" });
+    }
     await classroomNotices.findByIdAndUpdate(req.params.id, req.body);
+
     const classroomNotices = await classroomNotices.findOne({
       _id: req.params.id,
     });
@@ -77,7 +100,7 @@ router.get("/all", checkRole(["role.superAdmin"]), getClassroomNotices);
 router.get("/all/:id", checkRole(["role.superAdmin"]), getClassroomNotice);
 router.get("/", getMyClassroomNotice);
 router.post("/", checkRole(["role.classAdmin"]), createClassroomNotice);
-router.patch("/:id", updateClassroomNotice);
-router.delete("/:id", deleteClassroomNotice);
+router.patch("/:id", checkRole(["role.classAdmin"]), updateClassroomNotice);
+router.delete("/:id", checkRole(["role.classAdmin"]), deleteClassroomNotice);
 
 export default router;
