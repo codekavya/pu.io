@@ -30,20 +30,20 @@ router.get("/form", (req, res, next) => {
 
 router.post("/signup", postUserSignUp);
 
-router.get("/key", auth, getAPIKEY);
+router.get("/key", auth("token"), getAPIKEY);
 
-router.post("/key", auth, formHandler);
+router.post("/key", auth("token"), formHandler);
 
 router.post("/signin", postUserSignIn);
 
-router.get("/user/me", auth, async (req, res) => {
+router.get("/user/me", auth("token"), async (req, res) => {
   res.send(req.user);
 });
 
-router.post("user/logout", auth, postLogoutUsers);
-router.post("user/logout/all", auth, postLogoutAllSession);
+router.post("user/logout", auth("token"), postLogoutUsers);
+router.post("user/logout/all", auth("token"), postLogoutAllSession);
 
-router.delete("/users/:id", auth, deleteUser);
-router.patch("/users/:id", auth, updateUser);
+router.delete("/users/:id", auth("token"), deleteUser);
+router.patch("/users/:id", auth("token"), updateUser);
 
 export default router;

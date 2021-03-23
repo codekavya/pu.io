@@ -9,5 +9,5 @@ connect(mongoDbKey, {
   useFindAndModify: false,
   useCreateIndex: true,
 }).catch((e) => {
-  console.log("Network Problem");
+  console.log(e);
 });

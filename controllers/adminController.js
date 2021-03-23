@@ -1,11 +1,10 @@
 import Users from "../models/adminModels.js";
 import Forms from "../models/form.js";
-import apiCounts  from "../models/apiModels.js"
+import apiCounts from "../models/apiModels.js";
 
 import api_Key_Generator from "../auth/apiFormHandler.js";
 
 export async function postUserSignUp(req, res) {
-  console.log(req.body);
   const user = new Users(req.body);
 
   try {
@@ -41,40 +40,35 @@ export async function postUserSignIn(req, res) {
   }
 }
 
-
-
-
-export async function getAPIKEY(req,res,next){
-
-  const user = req.user
-  const key = user.apiKey
-  const form = await Forms.findOne({userID:user._id.toString()});
+export async function getAPIKEY(req, res, next) {
+  const user = req.user;
+  const key = user.apiKey;
+  const form = await Forms.findOne({ userID: user._id.toString() });
   if (!key && !form) {
-    console.log("Inside the Form");
     //Send the Form to Database
     res.send(
       '<form action="/key" method="POST">Name:<input type="text" name="Name"><br>Password:<input type="password" name="Password"><br>Email:<input type="Email" name="Email"><br>Faculty:<input type="text" name="Faculty"><br>College:<input type="text" name="College"><br>Purpose:<textarea name="Purpose"></textarea><br><button type="submit">Send</button></form>'
     );
-
-    
-  } else if(!key && form && !form.accepted){
+  } else if (!key && form && !form.accepted) {
     res.status(208).send({
       msg: "Your Form is Under Validation",
     });
   }
-  
 
   if (!key && form.accepted) {
-    console.log({key})
     const generated_key = await user.generateAPIKEY();
-    const api = new apiCounts({ ApiKey: generated_key,userName:user.Name,userID:user._id.toString()});
-  
+    const api = new apiCounts({
+      ApiKey: generated_key,
+      userName: user.Name,
+      userID: user._id.toString(),
+    });
+
     await api.save();
     //Send Through Headers APIKEY
     console.log(`API KEY : ${generated_key}`);
     res.send({
-      user:user
-    })
+      user: user,
+    });
   }
   if (key && form.accepted) {
     res.status(200).send({
@@ -87,7 +81,6 @@ export async function getAPIKEY(req,res,next){
 
 export async function postreqForm(req, res, next) {
   api_Key_Generator(req, res, next);
-  
 }
 
 export async function deleteUser(req, res, next) {

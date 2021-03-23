@@ -13,20 +13,23 @@ import schedulesController from "../controllers/mainControllers/schedulesControl
 import noticesController from "../controllers/mainControllers/noticesController.js";
 import programsController from "../controllers/mainControllers/programsController.js";
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
-
+import classroomNoticesController from "../controllers/mainControllers/classroomNoticesController.js";
+import classroomCotroller from "../controllers/mainControllers/classroomsController.js";
 const router = Router();
 
-router.use("/faculties", auth, facultiesController);
-router.use("/schoolsandcolleges", auth, schoolsController);
-router.use("/programs", auth, programsController);
-router.use("/buildings", auth, buildingsController);
-router.use("/clubs", auth, clubsController);
-router.use("/syllabus", auth, syllabusController);
-router.use("/schedules", auth, schedulesController);
-router.use("/contacts", auth, contactsController);
-router.use("/notices", auth, noticesController);
+router.use("/faculties", auth(), facultiesController);
+router.use("/schoolsandcolleges", auth(), schoolsController);
+router.use("/programs", auth(), programsController);
+router.use("/buildings", auth(), buildingsController);
+router.use("/clubs", auth(), clubsController);
+router.use("/syllabus", auth(), syllabusController);
+router.use("/schedules", auth(), schedulesController);
+router.use("/contacts", auth(), contactsController);
+router.use("/notices", auth(), noticesController);
+router.use("/classroom", auth(), classroomCotroller);
+router.use("/classroomNotices", auth(), classroomNoticesController);
 
-router.get("/check", auth, checkRole(["role.classadmin"]), (req, res) =>
+router.get("/check", auth(), checkRole(["role.classadmin"]), (req, res) =>
   res.send("Hehe noice program")
 );
 export default router;

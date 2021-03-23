@@ -22,8 +22,47 @@ export async function getSchedule(req, res) {
     res.status(500).send(error);
   }
 }
+
+export async function createSchedule(req, res) {
+  const schedule = new schedules(req.body);
+  try {
+    await schedule.save();
+    res.send({ schedule });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function deleteSchedule(req, res) {
+  try {
+    const schedule = await schedules.findByIdAndDelete(req.params.id);
+
+    if (!schedule) res.status(404).send("No items Found");
+    res.send({ "message": "Schedule deleted" });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+export async function updateSchedule(req, res) {
+  try {
+    await schedules.findByIdAndUpdate(req.params.id, req.body);
+    const schedule = await schedules.findOne({ _id: req.params.id });;
+
+    res.send({ schedule });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
 router.get("/", getSchedules);
 router.get("/:id", getSchedule);
+
+router.post("/", createSchedule);
+router.patch("/:id", updateSchedule);
+router.delete("/:id", deleteSchedule);
 
 
 export default router;
