@@ -28,7 +28,6 @@ export async function createBuilding(req, res) {
   try {
     await building.save();
     res.send({ building });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -39,8 +38,7 @@ export async function deleteBuilding(req, res) {
     const building = await buildings.findByIdAndDelete(req.params.id);
 
     if (!building) res.status(404).send("No items Found");
-    res.send({ "message": "Building deleted" });
-
+    res.send({ message: "Building deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -49,7 +47,7 @@ export async function deleteBuilding(req, res) {
 export async function updateBuilding(req, res) {
   try {
     await buildings.findByIdAndUpdate(req.params.id, req.body);
-    const building = await buildings.findOne({ _id: req.params.id });;
+    const building = await buildings.findOne({ _id: req.params.id });
 
     res.send({ building });
   } catch (error) {

@@ -81,6 +81,16 @@ const userSchema = new Schema(
         required: false,
       },
     ],
+    clubs: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
+    classroom: {
+      type: String,
+      required: false,
+    },
   },
 
   {
@@ -97,7 +107,6 @@ userSchema.methods.getToken = async function () {
   return token;
 };
 userSchema.methods.generateAPIKEY = async function () {
-  console.log("Came here No Debugger attached");
   const user = this;
   const key = sign({ Email: user.Email }, "TECHG123");
   user.apiKey = key;

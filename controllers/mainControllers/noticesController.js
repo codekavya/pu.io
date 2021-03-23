@@ -22,7 +22,6 @@ export async function categoryController(req, res) {
     req.params.category !== "all" && req.params.category
       ? baseUrl + `noticetype/${req.params.category}`
       : baseUrl + "notice";
-  console.log(url);
   getNotices(url, (notices) => {
     res.json({
       timeStamp: Date.now(),

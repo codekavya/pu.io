@@ -1,4 +1,4 @@
-import express,  { json } from "express";
+import express, { json } from "express";
 import mainRoutes from "./routes/mainRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import "./db/mongoose.js";
