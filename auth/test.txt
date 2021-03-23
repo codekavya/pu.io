@@ -1,4 +1,0 @@
-Test Condtion for Postman
-jsonData = pm.response.json();
-apiID = jsonData.api.id
-pm.environment.set("api_id", apiID);

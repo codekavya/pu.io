@@ -2,8 +2,10 @@ import express,  { json } from "express";
 import mainRoutes from "./routes/mainRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import "./db/mongoose.js";
+import job from "./Utils/corn_job.js";
 const app = express();
 const port = process.env.port || 4000;
+
 
 app.use(json());
 app.use((req, res, next) => {
@@ -16,6 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.use(mainRoutes);
 app.use(adminRoutes);
 
@@ -25,7 +28,7 @@ app.use((error, req, res, next) => {
   const message = error.message;
   res.status(status).json({ message: message });
 });
-
+await job()
 app.listen(port, () => {
   console.log(`Listening to Port ${port}`);
 });

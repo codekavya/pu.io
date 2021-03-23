@@ -7,7 +7,6 @@ import api_Key_Generator from "../auth/apiFormHandler.js";
 export async function postUserSignUp(req, res) {
   console.log(req.body);
   const user = new Users(req.body);
-  await user.save();
 
   try {
     await user.save();
@@ -87,7 +86,6 @@ export async function getAPIKEY(req,res,next){
 }
 
 export async function postreqForm(req, res, next) {
-
   api_Key_Generator(req, res, next);
   
 }
@@ -100,7 +98,7 @@ export async function deleteUser(req, res, next) {
       res.send(usertoDelete);
     }
   } catch (error) {
-    res.status(500);
+    res.status(500).send({"Error":E});
   }
 }
 
@@ -115,7 +113,6 @@ export async function updateUser(req, res, next) {
       req.user[entry] = req.body[entry];
     });
     await req.user.save();
-
     res.status(201).send();
   } catch (e) {
     res.status(404).send(e);
