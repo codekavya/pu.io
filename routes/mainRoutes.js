@@ -15,6 +15,7 @@ import programsController from "../controllers/mainControllers/programsControlle
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
 import classroomNoticesController from "../controllers/mainControllers/classroomNoticesController.js";
 import classroomCotroller from "../controllers/mainControllers/classroomsController.js";
+import chatsController from "../controllers/mainControllers/chatsController.js";
 const router = Router();
 
 router.use("/faculties", auth(), facultiesController);
@@ -32,4 +33,6 @@ router.use("/classroomNotices", auth(), classroomNoticesController);
 router.get("/check", auth(), checkRole(["role.classadmin"]), (req, res) =>
   res.send("Hehe noice program")
 );
+router.use("/chats", chatsController);
+
 export default router;

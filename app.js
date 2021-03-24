@@ -2,10 +2,11 @@ import express, { json } from "express";
 import mainRoutes from "./routes/mainRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import "./db/mongoose.js";
-import job from "./Utils/corn_job.js";
+import * as http from "http";
+import * as socketio from "socket.io";
+// import job from "./Utils/corn_job.js";
 const app = express();
 const port = process.env.port || 4000;
-
 
 app.use(json());
 app.use((req, res, next) => {
@@ -18,9 +19,12 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(mainRoutes);
 app.use(adminRoutes);
+const server = http.createServer(app);
+
+export const io = new socketio.Server();
+io.attach(server);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -28,7 +32,7 @@ app.use((error, req, res, next) => {
   const message = error.message;
   res.status(status).json({ message: message });
 });
-await job()
-app.listen(port, () => {
+// await job()
+server.listen(port, () => {
   console.log(`Listening to Port ${port}`);
 });
