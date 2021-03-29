@@ -6,6 +6,8 @@ import bcryptjs from "bcryptjs";
 const { compare, hash } = bcryptjs;
 import jwt from "jsonwebtoken";
 const { sign } = jwt;
+import Error from "../Errors/error.js"
+
 
 const userSchema = new Schema(
   {
@@ -91,6 +93,11 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+
+    chatRooms:[{
+      type:Schema.Types.ObjectId,
+      ref:"chatRoom"
+    }]
   },
 
   {
@@ -126,8 +133,10 @@ userSchema.methods.toJSON = function () {
 
 userSchema.statics.findByProvideInfo = async (Email, password) => {
   const user = await Users.findOne({ Email });
+
+
   if (!user) {
-    throw new Error("Unable to login in");
+    throw new Error("Invalid Email or Password");
   }
   const isPasswordMatched = await compare(password, user.Password);
   if (!isPasswordMatched) {

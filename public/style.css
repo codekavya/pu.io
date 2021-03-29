@@ -1,4 +1,3 @@
-<style>
 body {
   margin: 0;
   padding-bottom: 3rem;
@@ -49,4 +48,3 @@ body {
 #messages > li:nth-child(odd) {
   background: #efefef;
 }
-</style>

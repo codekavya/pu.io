@@ -8,36 +8,65 @@ import chatRoomModel from "../models/chatRoomModel.js"
 
 //room is created once and stored in database
 export async function createRoom(req, res, next) {
+  try{
   //Get the room name when user is prompted to enter the group name;
-  const roomName = req.roomName;
-    //Create room and create a collection in database
-    newChat = new chatRoomModel({
-      name:roomName,
-      createdBy: req.user._id
+  const roomName = req.body.roomName;
+  const roomMembers = req.body.roomMembers;
+  const user = req.user;
+
+    //From Room Schema Add new Room Name to database
+     const newChatRoom =  new chatRoomModel({
+      Name:roomName,
+      createdBy:req.user._id
+      })
+    await newChatRoom.save();
+
+    user.chatRooms.push(newChatRoom._id);
+    newChatRoom.RoomMembers.push(user._id,req.body.roomMembers)
+    await user.save();
+    res.redirect(`/rooms/${newChatRoom._id}`);
+  }catch(Error){
+    res.send({
+      Error:Error
     })
-    await newChat.save();
+  }
 }
 
 
 
 export async function sendMessage(req, res, next) {
+  console.log(req.params.id)
+  const chatRoom = await chatRoomModel.findById({_id:req.params.id});
+  const chatRoomName = chatRoom.Name
   io.once("connection", (socket) => {
+
     console.log("a connection created");
-    socket.broadcast.emit('message',`${req.user.name} has joined the group`)
+    //check if the group has message previously 
+   if(chatRoom.messages){
+     //populate before sending 
+    console.log(chatRoom.populate("messages").populated("messages"));
+      // io.emit("message",chatRoomModel.messages.populate("chats"))
+   }
+    socket.broadcast.emit('message',`${req.user.Name} has joined the group`)
     //when user clicks send button create a new message and
     //Store that in database
-    socket.on("send-message", async (msg) => {
-      const chat = new MessageModel({
+    socket.on("message", async (msg) => {
+      const message = new MessageModel({
         message: msg,
         messageBy: req.user._id,
-        chatRoomName: data.roomName
+        chatRoomName:chatRoom._id
       })
-      await chat.save();
-      io.emmit("message",msg);
+      await message.save();
+      chatRoom.messages.push(message._id);
+      await chatRoom.save();
+      io.emit("message",msg);
     })
 
+
+
     socket.on('disconnect',()=>{
-      io.emit('message',`${req.user.name} has left the group`)
+      //set status to offline a boolean value
+      io.emit('message',`${req.user.Name} has left the group`)
     })
   });
   

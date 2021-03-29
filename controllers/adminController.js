@@ -1,8 +1,10 @@
 import Users from "../models/adminModels.js";
 import Forms from "../models/form.js";
 import apiCounts from "../models/apiModels.js";
+import error from "../Errors/error.js"
 
 import api_Key_Generator from "../auth/apiFormHandler.js";
+import MyError from "../Errors/error.js";
 
 export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
@@ -11,6 +13,9 @@ export async function postUserSignUp(req, res) {
     await user.save();
     res.send({ Account: user });
   } catch (E) {
+    if(E.code===11000){
+      return res.status(400).send("User with this account already exists")
+    }
     res.send(E);
   }
 }
@@ -36,7 +41,7 @@ export async function postUserSignIn(req, res) {
     });
     res.json({ user, token });
   } catch (error) {
-    res.status(401).send({ Error: "Error Logging", error });
+    res.status(401).send({ error });
   }
 }
 
