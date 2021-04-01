@@ -1,6 +1,6 @@
 import express from "express";
-import { io } from "../app.js";
 import path from 'path';
+import checkMember from "../Utils/check_member.js"
 
 const {
     Router
@@ -14,21 +14,25 @@ import {
 const router = Router();
 
 
-router.post("/create",auth(),createRoom);
-router.get('/rooms',auth(),async(req,res,next)=>{
-    const user = req.user.populate({
-        path:"chatRoom",
-        populate:{
-            path:"Users"
-        }
-    })
-    res.send({rooms: user.chatRooms})
+router.post("/room/create",auth(),createRoom);
+
+//get all the rooms of the user
+router.get('/allrooms',auth(),async(req,res,next)=>{
+    //populate the loggedin user's chatRoom field and send the chatRoom object as response
+    const loggedinUser = await req.user.populate({
+        path:"chatRooms",select:"Name"
+    }).execPopulate()
+    res.send({rooms: loggedinUser.chatRooms})
 })
 
-//append the id when user clicks in the room
-//array of rooms object id is sent to fromtend
-router.get("/rooms/:id",auth(),(req,res,next)=>{
-    res.sendFile(path.join(process.cwd(),"public","chatbox.html"));
-    next();
+//GET REQUEST TO .../rooms/?id=xyz 
+router.get("/rooms",auth(), checkMember,async (req,res,next)=>{
+    try{
+        res.sendFile(path.join(process.cwd(),"public","chatbox.html"));
+        next();
+    }catch(E){
+        res.send({Error:E})
+    }
+    
 },sendMessage)
 export default router;

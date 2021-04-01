@@ -13,10 +13,7 @@ export async function postUserSignUp(req, res) {
     await user.save();
     res.send({ Account: user });
   } catch (E) {
-    if(E.code===11000){
-      return res.status(400).send("User with this account already exists")
-    }
-    res.send(E);
+    return res.status(400).send("User with this account already exists")
   }
 }
 export async function postLogoutAllSession(req, res, next) {

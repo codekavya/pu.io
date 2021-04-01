@@ -13,11 +13,11 @@ const chatSchema = new Schema({
   },
   createdBy: {
     type: Schema.Types.ObjectId,
-    ref:"Users"
+    ref:"Admin"
   },
   RoomMembers: [{
     type: Schema.Types.ObjectId,
-    ref: "Users"
+    ref: "Admin"
   }],
   messages: [{
     type: Schema.Types.ObjectId,

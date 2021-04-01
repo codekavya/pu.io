@@ -57,8 +57,9 @@ const userSchema = new Schema(
 
     apiKey: {
       type: String,
-      default: "",
-      unique: true,
+        index:true, 
+        unique:true,
+        sparse:true
     },
     formAccepted: {
       type: Boolean,
@@ -154,6 +155,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-const Users = model("Users", userSchema);
+const Users = model("Admin", userSchema);
 
 export default Users;

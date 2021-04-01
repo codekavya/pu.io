@@ -7,11 +7,14 @@ const Schema = _Schema;
     message: String,
     messageBy:{
       type: Schema.Types.ObjectId,
-      ref:"Users"
+      ref:"Admin"
     },
     chatRoomName:{
       type:Schema.Types.ObjectId,
       ref:"chatRoom"
+    },
+    messageSentAt:{
+      type:Date
     }
   });
   const MessageModel = model("chats", chatSchema);
