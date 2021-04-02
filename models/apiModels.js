@@ -6,8 +6,8 @@ const apiCountsSchema = new Schema({
   ApiKey: {
     type: String,
     trim: true,
-    required: [true],
-    unique: true,
+    // required: [true],
+    // unique: true,
   },
   TotalHits: {
     type: Number,
@@ -21,15 +21,7 @@ const apiCountsSchema = new Schema({
     type: Number,
     default: 100,
   },
-  userName:{
-    type:String,
-    required:true
-  },
-  userID:{
-    type:String,
-    required:true
-    
-  }
+  user: { type: Schema.Types.ObjectId, ref: "admins" },
 });
 
 const apiCounts = model("apiCounts", apiCountsSchema);

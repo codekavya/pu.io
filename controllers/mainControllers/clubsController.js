@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import clubs from "../../models/clubsinfo.js";
-
+import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getClubs(req, res) {
@@ -28,7 +28,6 @@ export async function createClub(req, res) {
   try {
     await club.save();
     res.send({ club });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -39,8 +38,7 @@ export async function deleteClub(req, res) {
     const club = await clubs.findByIdAndDelete(req.params.id);
 
     if (!club) res.status(404).send("No items Found");
-    res.send({ "message": "Club deleted" });
-
+    res.send({ message: "Club deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -49,7 +47,7 @@ export async function deleteClub(req, res) {
 export async function updateClub(req, res) {
   try {
     await clubs.findByIdAndUpdate(req.params.id, req.body);
-    const club = await clubs.findOne({ _id: req.params.id });;
+    const club = await clubs.findOne({ _id: req.params.id });
 
     res.send({ club });
   } catch (error) {
@@ -61,7 +59,7 @@ router.get("/", getClubs);
 router.get("/:id", getClub);
 
 router.post("/", createClub);
-router.patch("/:id", updateClub);
-router.delete("/:id", deleteClub);
+router.patch("/:id", checkRole(["role.superAdmin"]), updateClub);
+router.delete("/:id", checkRole(["role.superAdmin"]), deleteClub);
 
 export default router;

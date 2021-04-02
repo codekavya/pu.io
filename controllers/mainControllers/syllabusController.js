@@ -1,6 +1,7 @@
 import express from "express";
 const { Router } = express;
 import syllabuses from "../../models/syllabus.js";
+import checkRole from "../../auth/checkRole.js";
 
 const router = Router();
 
@@ -25,12 +26,9 @@ export async function getSyllabus(req, res) {
 
 export async function createSyllabus(req, res) {
   const syllabus = new syllabuses(req.body);
-
-
   try {
     await syllabus.save();
     res.send({ syllabus });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -41,8 +39,7 @@ export async function deleteSyllabuses(req, res) {
     const syllabus = await syllabuses.findByIdAndDelete(req.params.id);
 
     if (!syllabus) res.status(404).send("No items Found");
-    res.send({ "message": "Syllabus deleted" });
-
+    res.send({ message: "Syllabus deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -51,7 +48,7 @@ export async function deleteSyllabuses(req, res) {
 export async function updateSyllabuses(req, res) {
   try {
     await syllabuses.findByIdAndUpdate(req.params.id, req.body);
-    const syllabus = await syllabuses.findOne({ _id: req.params.id });;
+    const syllabus = await syllabuses.findOne({ _id: req.params.id });
 
     res.send({ syllabus });
   } catch (error) {
@@ -62,8 +59,8 @@ export async function updateSyllabuses(req, res) {
 router.get("/", getSyllabuses);
 router.get("/:id", getSyllabus);
 
-router.post("/", getSyllabus);
-router.patch("/:id", updateSyllabuses);
-router.delete("/:id", deleteSyllabuses);
+router.post("/", checkRole(["role.classAdmin"]), createSyllabus);
+router.patch("/:id", checkRole(["role.classAdmin"]), updateSyllabuses);
+router.delete("/:id", checkRole(["role.classAdmin"]), deleteSyllabuses);
 
 export default router;

@@ -7,10 +7,6 @@ const classroomsSchema = new Schema({
     type: String,
     required: true,
   },
-  program: {
-    type: String,
-    required: true,
-  },
   section: {
     type: String,
     required: true,
@@ -23,18 +19,11 @@ const classroomsSchema = new Schema({
     type: String,
     required: true,
   },
-  college: {
-    type: String,
-    required: true,
-  },
-  schedule: {
-    type: String,
-    required: false,
-  },
-  building: {
-    type: String,
-    required: false,
-  },
+  program: { type: Schema.Types.ObjectId, ref: "programs" },
+  college: { type: Schema.Types.ObjectId, ref: "colleges" },
+  schedule: { type: Schema.Types.ObjectId, ref: "schedules" },
+  users: [{ type: Schema.Types.ObjectId, ref: "admins" }],
+  notices: [{ type: Schema.Types.ObjectId, ref: "classroomNotices" }],
 });
 
 const classrooms = model("classrooms", classroomsSchema);

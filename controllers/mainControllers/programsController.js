@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import programs from "../../models/programs.js";
-
+import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getPrograms(req, res) {
@@ -28,7 +28,6 @@ export async function createProgram(req, res) {
   try {
     await program.save();
     res.send({ program });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -39,8 +38,7 @@ export async function deleteProgram(req, res) {
     const program = await programs.findByIdAndDelete(req.params.id);
 
     if (!program) res.status(404).send("No items Found");
-    res.send({ "message": "Program deleted" });
-
+    res.send({ message: "Program deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -49,7 +47,7 @@ export async function deleteProgram(req, res) {
 export async function updateProgram(req, res) {
   try {
     await programs.findByIdAndUpdate(req.params.id, req.body);
-    const program = await programs.findOne({ _id: req.params.id });;
+    const program = await programs.findOne({ _id: req.params.id });
 
     res.send({ program });
   } catch (error) {
@@ -60,8 +58,8 @@ export async function updateProgram(req, res) {
 router.get("/", getPrograms);
 router.get("/:id", getProgram);
 
-router.post("/", createProgram);
-router.patch("/:id", updateProgram);
-router.delete("/:id", deleteProgram);
+router.post("/", checkRole(["role.superAdmin"]), createProgram);
+router.patch("/:id", checkRole(["role.superAdmin"]), updateProgram);
+router.delete("/:id", checkRole(["role.superAdmin"]), deleteProgram);
 
 export default router;

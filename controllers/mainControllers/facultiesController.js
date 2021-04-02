@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import faculties from "../../models/faculties.js";
-
+import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getFaculties(req, res) {
@@ -28,7 +28,6 @@ export async function createFaculty(req, res) {
   try {
     await faculty.save();
     res.send({ faculty });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -39,8 +38,7 @@ export async function deleteFaculty(req, res) {
     const faculty = await faculties.findByIdAndDelete(req.params.id);
 
     if (!faculty) res.status(404).send("No items Found");
-    res.send({ "message": "Faculty deleted" });
-
+    res.send({ message: "Faculty deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -49,7 +47,7 @@ export async function deleteFaculty(req, res) {
 export async function updateFaculty(req, res) {
   try {
     await faculties.findByIdAndUpdate(req.params.id, req.body);
-    const faculty = await faculties.findOne({ _id: req.params.id });;
+    const faculty = await faculties.findOne({ _id: req.params.id });
 
     res.send({ faculty });
   } catch (error) {
@@ -61,7 +59,7 @@ router.get("/", getFaculties);
 router.get("/:id", getFaculty);
 
 router.post("/", createFaculty);
-router.patch("/:id", updateFaculty);
-router.delete("/:id", deleteFaculty);
+router.patch("/:id", checkRole(["role.superAdmin"]), updateFaculty);
+router.delete("/:id", checkRole(["role.superAdmin"]), deleteFaculty);
 
 export default router;

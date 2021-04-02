@@ -9,7 +9,6 @@ const userSchema = new Schema(
       trim: true,
       required: [true, "Enter the name"],
     },
-
     Email: {
       type: String,
       trim: true,
@@ -21,44 +20,20 @@ const userSchema = new Schema(
         // }
       },
     },
-    College: {
-      type: String,
-      trim: true,
-      required: [true, "Enter your College Name"],
-    },
-    Faculty: {
-      type: String,
-      trim: true,
-      required: [true, "Enter your Faculty"],
-    },
     Purpose: {
       type: String,
       trim: true,
       required: [true, "Email Address is Required"],
     },
-
-    isRequested: {
-      type: Boolean,
-      default: true,
-    },
-
-    userName:{
-      type:String,
-      required:true
-    },
-    userID:{
-      type:String,
-      required:true
-    },
-
     accepted: {
       type: Boolean,
       default: false,
     },
+    user: { type: Schema.Types.ObjectId, ref: "admins" },
   },
   { timestamps: true }
 );
 
-const Forms = model("Forms", userSchema);
+const Forms = model("forms", userSchema);
 
 export default Forms;

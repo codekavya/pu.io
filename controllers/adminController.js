@@ -6,12 +6,15 @@ import api_Key_Generator from "../auth/apiFormHandler.js";
 
 export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
-
+  console.log(user);
   try {
     await user.save();
-    res.send({ Account: user });
+    return res.send({ Account: user });
   } catch (E) {
-    res.send(E);
+    if (E.code === 11000) {
+      return res.status(400).send("User with this account already exists");
+    }
+    return res.send(E);
   }
 }
 export async function postLogoutAllSession(req, res, next) {
@@ -34,23 +37,27 @@ export async function postUserSignIn(req, res) {
       "Content-Type": "application/json",
       "Set-Cookie": `SKey = Bearer ${token}`,
     });
-    res.json({ user, token });
+    const userData = await user
+      .populate({ path: "classroom", select: ["shortCode"] })
+      .execPopulate();
+    res.json({ user: userData, token });
   } catch (error) {
+    console.log(error);
     res.status(401).send({ Error: "Error Logging", error });
   }
 }
 
-export async function getAPIKEY(req, res, next) {
+export async function getApiKeyOrForm(req, res, next) {
   const user = req.user;
-  const key = user.apiKey;
-  const form = await Forms.findOne({ userID: user._id.toString() });
+  const key = await apiCounts.findOne({ user: user._id });
+  const form = await Forms.findOne({ user: user._id });
   if (!key && !form) {
     //Send the Form to Database
-    res.send(
+    return res.send(
       '<form action="/key" method="POST">Name:<input type="text" name="Name"><br>Password:<input type="password" name="Password"><br>Email:<input type="Email" name="Email"><br>Faculty:<input type="text" name="Faculty"><br>College:<input type="text" name="College"><br>Purpose:<textarea name="Purpose"></textarea><br><button type="submit">Send</button></form>'
     );
   } else if (!key && form && !form.accepted) {
-    res.status(208).send({
+    return res.status(208).send({
       msg: "Your Form is Under Validation",
     });
   }
@@ -59,21 +66,16 @@ export async function getAPIKEY(req, res, next) {
     const generated_key = await user.generateAPIKEY();
     const api = new apiCounts({
       ApiKey: generated_key,
-      userName: user.Name,
-      userID: user._id.toString(),
-    });
-
-    await api.save();
-    //Send Through Headers APIKEY
-    console.log(`API KEY : ${generated_key}`);
-    res.send({
       user: user,
+    });
+    await api.save();
+    return res.send({
+      apiKey: generated_key,
     });
   }
   if (key && form.accepted) {
-    res.status(200).send({
-      user: user.toJSON(),
-      apikey: user.apiKey,
+    return res.status(200).send({
+      apiKey: key.ApiKey,
     });
   }
   next();
@@ -91,7 +93,7 @@ export async function deleteUser(req, res, next) {
       res.send(usertoDelete);
     }
   } catch (error) {
-    res.status(500).send({"Error":E});
+    res.status(500).send({ Error: E });
   }
 }
 

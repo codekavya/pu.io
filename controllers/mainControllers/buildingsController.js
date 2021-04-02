@@ -1,6 +1,8 @@
 import express from "express";
+// const express = require("express");
 const { Router } = express;
 import buildings from "../../models/buildings.js";
+import checkRole from "../../auth/checkRole.js";
 
 const router = Router();
 
@@ -24,7 +26,16 @@ export async function getBuilding(req, res) {
 }
 
 export async function createBuilding(req, res) {
-  const building = new buildings(req.body);
+  const user = await req.user.populate("classroom").execPopulate();
+  const college =
+    req.roles.includes("role.superAdmin") && req.body.college
+      ? req.body.college
+      : user.classroom.college._id;
+  const building = new buildings({
+    ...req.body,
+    creator: req.user._id,
+    college: college,
+  });
   try {
     await building.save();
     res.send({ building });
@@ -58,7 +69,7 @@ export async function updateBuilding(req, res) {
 router.get("/", getBuildings);
 router.get("/:id", getBuilding);
 
-router.post("/", createBuilding);
+router.post("/", checkRole(["role.collegeAdmin"]), createBuilding);
 router.patch("/:id", updateBuilding);
 router.delete("/:id", deleteBuilding);
 

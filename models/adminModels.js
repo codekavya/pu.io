@@ -29,10 +29,6 @@ const userSchema = new Schema(
       trim: true,
       required: [false],
     },
-    college: {
-      type: String,
-      required: false,
-    },
     Email: {
       type: String,
       trim: true,
@@ -52,21 +48,10 @@ const userSchema = new Schema(
           throw new Error("Type Strong Password");
       },
     },
-
-    apiKey: {
-      type: String,
-      default: "",
-      unique: true,
-    },
-    formAccepted: {
-      type: Boolean,
-      default: false,
-    },
     formRequested: {
       type: Boolean,
       default: false,
     },
-
     tokens: [
       {
         token: {
@@ -81,18 +66,10 @@ const userSchema = new Schema(
         required: false,
       },
     ],
-    clubs: [
-      {
-        type: String,
-        required: false,
-      },
-    ],
-    classroom: {
-      type: String,
-      required: false,
-    },
+    clubs: [{ type: Schema.Types.ObjectId, ref: "clubs" }],
+    classroom: { type: Schema.Types.ObjectId, ref: "classrooms" },
+    api: { type: Schema.Types.ObjectId, ref: "apicounts" },
   },
-
   {
     timestamps: true,
   }
@@ -145,6 +122,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-const Users = model("Users", userSchema);
+const Users = model("admins", userSchema);
 
 export default Users;

@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import schedules from "../../models/schedule.js";
-
+import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getSchedules(req, res) {
@@ -24,11 +24,10 @@ export async function getSchedule(req, res) {
 }
 
 export async function createSchedule(req, res) {
-  const schedule = new schedules(req.body);
   try {
+    const schedule = new schedules({ ...req.body, creator: req.user._id });
     await schedule.save();
     res.send({ schedule });
-
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -39,8 +38,7 @@ export async function deleteSchedule(req, res) {
     const schedule = await schedules.findByIdAndDelete(req.params.id);
 
     if (!schedule) res.status(404).send("No items Found");
-    res.send({ "message": "Schedule deleted" });
-
+    res.send({ message: "Schedule deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -48,8 +46,11 @@ export async function deleteSchedule(req, res) {
 }
 export async function updateSchedule(req, res) {
   try {
-    await schedules.findByIdAndUpdate(req.params.id, req.body);
-    const schedule = await schedules.findOne({ _id: req.params.id });;
+    await schedules.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+      creator: req.user._id,
+    });
+    const schedule = await schedules.findOne({ _id: req.params.id });
 
     res.send({ schedule });
   } catch (error) {
@@ -60,9 +61,8 @@ export async function updateSchedule(req, res) {
 router.get("/", getSchedules);
 router.get("/:id", getSchedule);
 
-router.post("/", createSchedule);
-router.patch("/:id", updateSchedule);
-router.delete("/:id", deleteSchedule);
-
+router.post("/", checkRole(["role.classAdmin"]), createSchedule);
+router.patch("/:id", checkRole(["role.classAdmin"]), updateSchedule);
+router.delete("/:id", checkRole(["role.classAdmin"]), deleteSchedule);
 
 export default router;

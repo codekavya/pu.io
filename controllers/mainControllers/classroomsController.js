@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import classrooms from "../../models/classrooms.js";
-
+import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getClassrooms(req, res) {
@@ -58,8 +58,8 @@ export async function updateClassroom(req, res) {
 router.get("/", getClassrooms);
 router.get("/:id", getClassroom);
 
-router.post("/", createClassroom);
-router.patch("/:id", updateClassroom);
-router.delete("/:id", deleteClassroom);
+router.post("/", checkRole(["role.superAdmin"]), createClassroom);
+router.patch("/:id", checkRole(["role.superAdmin"]), updateClassroom);
+router.delete("/:id", checkRole(["role.superAdmin"]), deleteClassroom);
 
 export default router;

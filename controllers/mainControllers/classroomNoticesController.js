@@ -1,13 +1,35 @@
 import express from "express";
 const { Router } = express;
 import classroomNotices from "../../models/classroomNotices.js";
+import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
 export async function getClassroomNotices(req, res) {
+  const query = {};
+  const paginateOptions = {
+    page: 1,
+    limit: 20,
+    customLabels: {
+      docs: "classroomNotices",
+    },
+  };
+  req.query.page && (paginateOptions.page = req.query.page);
+  req.query.limit && (paginateOptions.limit = req.query.limit);
+  req.query.type && (query["type"] = req.query.type);
+  if (req.query.s) {
+    query["$or"] = [
+      { title: { $regex: new RegExp(req.query.s), $options: "i" } },
+      { description: { $regex: new RegExp(req.query.s), $options: "i" } },
+    ];
+  }
+  console.log(query);
   try {
-    const classroomNoticeList = await classroomNotices.find({});
-    res.send({ classroomNotices: classroomNoticeList, count: req.count });
+    const classroomNoticeList = await classroomNotices.paginate(
+      query,
+      paginateOptions
+    );
+    res.send({ ...classroomNoticeList, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -24,23 +46,48 @@ export async function getClassroomNotice(req, res) {
 }
 
 export async function getMyClassroomNotice(req, res) {
+  const query = {};
+  const paginateOptions = {
+    page: 1,
+    limit: 20,
+    customLabels: {
+      docs: "classroomNotices",
+    },
+  };
+  req.query.page && (paginateOptions.page = req.query.page);
+  req.query.limit && (paginateOptions.limit = req.query.limit);
+  req.query.type && (query["type"] = req.query.type);
+  if (req.query.s) {
+    query["$or"] = [
+      { title: { $regex: new RegExp(req.query.s), $options: "i" } },
+      { description: { $regex: new RegExp(req.query.s), $options: "i" } },
+    ];
+  }
+  query["classroom"] = req.user.classroom._id;
+  console.log(query);
   try {
-    const myClassroomNotices = await classroomNotices.find({
-      classroomId: req.user.classroom,
-    });
-    res.send({ myClassroomNotices });
+    const myClassroomNotices = await classroomNotices.paginate(
+      query,
+      paginateOptions
+    );
+    res.send({ ...myClassroomNotices, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
   }
 }
 export async function createClassroomNotice(req, res) {
+  const user = await req.user.populate("classroom").execPopulate();
+  const classroom = await classrooms.findById(user.classroom._id);
   const classroomNotice = new classroomNotices({
     ...req.body,
-    classroomId: req.user.classroom,
+    classroom: classroom._id,
+    creator: user._id,
   });
   try {
     await classroomNotice.save();
+    classroom.notices.push(classroomNotice);
+    await classroom.save();
     res.send({ classroomNotice });
   } catch (error) {
     console.log(error);
@@ -97,7 +144,7 @@ export async function updateClassroomNotice(req, res) {
   }
 }
 router.get("/all", checkRole(["role.superAdmin"]), getClassroomNotices);
-router.get("/all/:id", checkRole(["role.superAdmin"]), getClassroomNotice);
+router.get("/all/:id", getClassroomNotice);
 router.get("/", getMyClassroomNotice);
 router.post("/", checkRole(["role.classAdmin"]), createClassroomNotice);
 router.patch("/:id", checkRole(["role.classAdmin"]), updateClassroomNotice);

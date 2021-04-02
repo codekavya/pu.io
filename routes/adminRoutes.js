@@ -8,7 +8,7 @@ import {
   postLogoutAllSession,
   postUserSignUp,
   postreqForm,
-  getAPIKEY,
+  getApiKeyOrForm,
 } from "../controllers/adminController.js";
 import formHandler from "../auth/apiFormHandler.js";
 
@@ -30,7 +30,7 @@ router.get("/form", (req, res, next) => {
 
 router.post("/signup", postUserSignUp);
 
-router.get("/key", auth("token"), getAPIKEY);
+router.get("/key", auth("token"), getApiKeyOrForm);
 
 router.post("/key", auth("token"), formHandler);
 
