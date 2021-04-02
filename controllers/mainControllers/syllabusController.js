@@ -25,7 +25,7 @@ export async function getSyllabus(req, res) {
 }
 
 export async function createSyllabus(req, res) {
-  const syllabus = new syllabuses(req.body);
+  const syllabus = new syllabuses({ ...req.body, creator: req.user._id });
   try {
     await syllabus.save();
     res.send({ syllabus });
