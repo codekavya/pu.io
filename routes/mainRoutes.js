@@ -32,5 +32,4 @@ router.use("/classroomNotices", auth(), classroomNoticesController);
 router.get("/check", auth(), checkRole(["role.classadmin"]), (req, res) =>
   res.send("Hehe noice program")
 );
-
 export default router;

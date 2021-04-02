@@ -23,7 +23,7 @@ const auth = (type = "") => async (req, res, next) => {
       if (type !== "token") {
         const value = req.header("x-api-key");
         const key = decode(value, "TECHG123");
-        const user = await adminModels.findOne({ Email: key.Email });
+        const user = await adminModels.findOne({ Email: key.Email});
         if (!user) {
           res.status(404).send({ Error: "Server Error" });
         }
