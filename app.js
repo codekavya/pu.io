@@ -10,8 +10,9 @@ const app = express();
 const __dirname = path.resolve();
 
 const port = process.env.port || 4000;
+app.use("/public",express.static(path.join(__dirname,"public")))
 app.use(json());
-console.log((path.join(__dirname, "public")))
+
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Methods",

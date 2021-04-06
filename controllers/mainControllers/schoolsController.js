@@ -12,7 +12,6 @@ export async function getschools(req, res) {
       .populate({ path: "classes", select: ["name", "shortCode"] });
     return res.send({ schools: schoolsList, count: req.count });
   } catch (error) {
-    console.log(error);
     return res.status(500).send(error);
   }
 }
@@ -20,7 +19,7 @@ export async function getschools(req, res) {
 export async function getAllSchools(req, res) {
   try {
     const schoolsList = await schools.find();
-    res.send({ schools: schoolsList, count: req.count });
+   return res.send({ schools: schoolsList, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -40,7 +39,7 @@ export async function createSchool(req, res) {
   const school = new schools(req.body);
   try {
     await school.save();
-    res.send({ school });
+   return res.send({ school });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

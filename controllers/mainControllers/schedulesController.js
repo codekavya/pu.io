@@ -61,6 +61,9 @@ export async function updateSchedule(req, res) {
 router.get("/", getSchedules);
 router.get("/:id", getSchedule);
 
+
+//check if the person is of the class
+
 router.post("/", checkRole(["role.classAdmin"]), createSchedule);
 router.patch("/:id", checkRole(["role.classAdmin"]), updateSchedule);
 router.delete("/:id", checkRole(["role.classAdmin"]), deleteSchedule);

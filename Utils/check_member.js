@@ -3,7 +3,7 @@ const checkMember =  async function (req, res, next) {
 
     try {
         //find the chatRoom through id
-        const chatRoom =  await chatRoomModel.findById(req.query.id);
+        const chatRoom =  await chatRoomModel.findById(req.params.id);
         //pass chatRoom object and members
         req.chatRoom = chatRoom
         const members = chatRoom.RoomMembers

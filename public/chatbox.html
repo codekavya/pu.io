@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+
     <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
     <style>
       body {
         margin: 0;
@@ -10,6 +13,18 @@
           Helvetica, Arial, sans-serif;
       }
 
+
+
+      .emoji-trigger{
+        padding: 8px;
+        margin-top: 5px;
+        margin-left:-40px;
+      }
+
+      .send{
+        padding-left: 4px;
+      }
+      
       #form {
         background: rgba(0, 0, 0, 0.15);
         padding: 0.25rem;
@@ -64,54 +79,15 @@
   <body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input id="input" autocomplete="off" />
+      <div class="emoji-trigger">
+        <i class="fas fa-smile-beam"></i>     
+      </div>
+       <button class="send">Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
-
-    <script>
-      var socket = io();
-
-      var form = document.getElementById("form");
-      var input = document.getElementById("input");
-
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("message", input.value);
-          input.value = "";
-        }
-      });
-      socket.on("message", function (msg) {
-        console.log("message came:", msg);
-        var item = document.createElement("li");
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-      //Query extractor
-      const roomid = Qs.parse(location.search, { ignoreQueryPrefix: true });
-
-      socket.on("database-messages", (msg) => {
-        console.log(msg);
-        for (let index = 0; index < msg.length; index++) {
-          let messageFromServer;
-          const element = msg[index];
-          messageFromServer = element.message;
-
-          var item = document.createElement("li");
-          item.textContent = `${element.messageBy.Name}: ${messageFromServer}`;
-          messages.appendChild(item);
-          window.scrollTo(0, document.body.scrollHeight);
-          console.log({
-            message: element.message,
-            messageBy: element.messageBy.Name,
-            sendAt: element.messageSentAt,
-          });
-        }
-      });
-
-      socket.emit("room", roomid.id);
-    </script>
   </body>
+  <script type="module" src="../public/test.js"></script>
+
 </html>

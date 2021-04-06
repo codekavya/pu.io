@@ -36,8 +36,13 @@ export async function getContacts(req, res) {
 }
 export async function getContact(req, res) {
   try {
-    const contact = await contacts.findOne({ _id: req.params.id });
-    res.send({ contact, count: req.count });
+    const contact = await contacts.
+    findOne({ _id: req.params.id }).
+    populate({
+      path:"college"
+    }).execPopulate();
+
+    res.send({ college: contact.college, count: req.count });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -74,15 +79,22 @@ export async function createContact(req, res) {
     res.status(500).send(error);
   }
 }
+
+
 export async function deleteContact(req, res) {
-  let contact = await contacts.findOne({ _id: req.params.id });
-  if (
-    !(
-      contact.createdBy == req.user._id || req.roles.includes("role.superAdmin")
-    )
-  ) {
+  try{
+    let contact = await contacts.findById(req.params.id);
+    if (!( contact.createdBy == req.user._id || req.roles.includes("role.superAdmin") )) {
+      return res.status(401).send({
+        Error: "You cannot delete this contact",
+      });
+    }
+  }catch(E){
+    console.log(E)
+    // since contact is null if contact is alraedy deleted
+    //so send Response no Contact Found
     return res.status(401).send({
-      Error: "You cannot delete this contact",
+      Error: "No Such Contacts"
     });
   }
   try {
@@ -136,10 +148,6 @@ router.post(
   createContactFromForm
 );
 router.patch("/:id", checkRole(["role.collegeAdmin"]), updateContact);
-router.delete(
-  "/:id",
-  checkRole(["role.superAdmin", "role.collegeAdmin"]),
-  deleteContact
-);
+router.delete("/:id",checkRole(["role.superAdmin", "role.collegeAdmin"]),deleteContact);
 
 export default router;

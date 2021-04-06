@@ -19,14 +19,15 @@ router.post("/room/create",auth(),createRoom);
 //get all the rooms of the user
 router.get('/allrooms',auth(),async(req,res,next)=>{
     //populate the loggedin user's chatRoom field and send the chatRoom object as response
-    const loggedinUser = await req.user.populate({
-        path:"chatRooms",select:"Name"
+    const loggedinUser = await req.user.
+    populate({
+        path:"chatRooms",select:"Name -_id"
     }).execPopulate()
-    res.send({rooms: loggedinUser.chatRooms})
+    res.send({rooms: loggedinUser})
 })
 
 //GET REQUEST TO .../rooms/?id=xyz 
-router.get("/rooms",auth(), checkMember,async (req,res,next)=>{
+router.get("/room/:id",auth(), checkMember,async (req,res,next)=>{
     try{
         res.sendFile(path.join(process.cwd(),"public","chatbox.html"));
         next();

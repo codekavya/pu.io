@@ -30,7 +30,7 @@ export async function createRoom(req, res, next) {
     loggedinUser.chatRooms.push(newChatRoom._id);
     await loggedinUser.save();
 
-    res.redirect(`/rooms/?id=${newChatRoom._id.toString()}`);
+    res.redirect(`/room/${newChatRoom._id.toString()}`);
   } catch (Error) {
     res.send({
       Error: Error,
@@ -63,6 +63,9 @@ export async function sendMessage(req, res, next) {
           })
           .execPopulate();
 
+
+          //Array of populated message should be decrypted..
+
         socket.emit("database-messages", populatedChatRoom.messages);
       }
       //TODO:set activeStatus
@@ -74,18 +77,27 @@ export async function sendMessage(req, res, next) {
     //get all message from clients and save to database and return to specific rooms
     socket.on("message", async (msg) => {
       const currentUser = Utils.findBy(loggedinUser._id.toString());
-      const newMessage = new MessageModel({
-        message: msg,
-        messageBy: req.user._id,
-        chatRoomName: chatRoom._id,
-        messageSentAt: new Date(),
-      });
+      const messageSendAt = new Date();
+      const message = msg
+      let messagetoDB ={
+          message,
+          messageBy: req.user._id,
+          chatRoomName: chatRoom._id,
+          messageSendAt
+      }
+      let messagetoClient ={
+        message,
+        messageBy: currentUser.username,
+        messageSendAt
+      } 
+      const newMessage = new MessageModel(messagetoDB);
       await newMessage.save();
       chatRoom.messages.push(newMessage._id);
       await chatRoom.save();
 
+
       //send the message to specific room
-      io.to(currentUser.room).emit("message", msg);
+      io.to(currentUser.room).emit("messageObj", messagetoClient);
     });
 
     socket.on("disconnect", () => {

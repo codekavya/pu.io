@@ -143,6 +143,8 @@ export async function updateClassroomNotice(req, res) {
     res.status(500).send(error);
   }
 }
+//Check if the Admin is of the same class
+
 router.get("/all", checkRole(["role.superAdmin"]), getClassroomNotices);
 router.get("/all/:id", getClassroomNotice);
 router.get("/", getMyClassroomNotice);
