@@ -5,6 +5,10 @@ import checkRole from "../../auth/checkRole.js";
 import colleges from "../../models/schoolsandcolleges.js";
 const router = Router();
 
+
+
+
+//TODO:TEST the endpoints
 export async function getContacts(req, res) {
   const query = {};
   const paginateOptions = {

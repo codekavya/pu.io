@@ -1,6 +1,7 @@
 import express from "express";
 const { Router } = express;
 import schools from "../../models/schoolsandcolleges.js";
+import checkRole from "../../auth/checkRole.js"
 
 const router = Router();
 
@@ -71,8 +72,8 @@ router.get("/", getAllSchools);
 router.get("/list", getschools);
 router.get("/:id", getschool);
 
-router.post("/", createSchool);
-router.patch("/:id", updateSchool);
-router.delete("/:id", deleteSchool);
+router.post("/",checkRole([""]), createSchool);
+router.patch("/:id",checkRole([""]), updateSchool);
+router.delete("/:id",checkRole([""]), deleteSchool);
 
 export default router;

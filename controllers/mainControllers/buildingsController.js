@@ -1,15 +1,20 @@
 import express from "express";
-// const express = require("express");
-const { Router } = express;
+
 import buildings from "../../models/buildings.js";
 import checkRole from "../../auth/checkRole.js";
 
+const {
+  Router
+} = express;
 const router = Router();
 
 export async function getBuildings(req, res) {
   try {
     const buildingList = await buildings.find({});
-    res.send({ faculties: buildingList, count: req.count });
+    res.send({
+      building: buildingList,
+      count: req.count
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -17,20 +22,26 @@ export async function getBuildings(req, res) {
 }
 export async function getBuilding(req, res) {
   try {
-    const faculty = await buildings.findOne({ _id: req.params.id });
-    res.send({ faculty, count: req.count });
+    const building = await buildings.findOne({
+      _id: req.params.id
+    });
+    res.send({
+      building,
+      count: req.count
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
   }
 }
 
+//Ask User for their college and class during form signup
+
 export async function createBuilding(req, res) {
   const user = await req.user.populate("classroom").execPopulate();
-  const college =
-    req.roles.includes("role.superAdmin") && req.body.college
-      ? req.body.college
-      : user.classroom.college._id;
+
+  const college = req.roles.includes("role.superAdmin") && req.body.college ? req.body.college : user.classroom.college._id;
+
   const building = new buildings({
     ...req.body,
     creator: req.user._id,
@@ -38,39 +49,77 @@ export async function createBuilding(req, res) {
   });
   try {
     await building.save();
-    res.send({ building });
+    res.send({
+      building
+    });
   } catch (error) {
-    console.log(error);
     res.status(500).send(error);
   }
 }
 export async function deleteBuilding(req, res) {
   try {
-    const building = await buildings.findByIdAndDelete(req.params.id);
+    const populatedUser = await req.user.populate({
+      path: "classroom",
+      select: "college"
+    }).execPopulate()
 
-    if (!building) res.status(404).send("No items Found");
-    res.send({ message: "Building deleted" });
+    const buildingToBeDeleted = await buildings.findById(req.params.id)
+
+    if (!buildingToBeDeleted)
+      return res.status(404).send({
+        Error: "No Such Building found. It might have been already deleted"
+      })
+    if (!(req.user.roles.includes("role.superAdmin") || buildingToBeDeleted.college._id.toString() == populatedUser.classroom.college._id.toString())) {
+      return res.status(401).send({
+        Error: "You cannot delete building from other college"
+      })
+    }
+    return res.send(await buildings.findByIdAndDelete(req.params.id))
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+    res.status(500).send({
+      Error: error.toString()
+    });
   }
 }
 export async function updateBuilding(req, res) {
   try {
-    await buildings.findByIdAndUpdate(req.params.id, req.body);
-    const building = await buildings.findOne({ _id: req.params.id });
+    const populatedUser = await req.user.populate({
+      path: "classroom",
+      select: "college"
+    }).execPopulate()
 
-    res.send({ building });
+
+    const college = req.roles.includes("role.superAdmin") && req.body.college ? req.body.college : req.user.classroom.college._id;
+
+    const building = {
+      ...req.body,
+      creator: req.user._id,
+      college: college,
+    };
+
+    const buildingToBeUpdated = await buildings.findById(req.params.id)
+
+    if (!buildingToBeUpdated)
+      return res.status(404).send({
+        Error: "No Such Building found. It might have been already deleted"
+      })
+    if (!(req.user.roles.includes("role.superAdmin") || buildingToBeUpdated.college._id.toString() == populatedUser.classroom.college._id.toString())) {
+      return res.status(401).send({
+        Error: "You cannot update building from other college"
+      })
+    }
+    return res.send(await buildings.findByIdAndUpdate(req.params.id, building))
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
+    res.status(500).send({
+      Error: error.toString()
+    });
   }
 }
 router.get("/", getBuildings);
 router.get("/:id", getBuilding);
 
 router.post("/", checkRole(["role.collegeAdmin"]), createBuilding);
-router.patch("/:id", updateBuilding);
-router.delete("/:id", deleteBuilding);
+router.patch("/:id", checkRole(['role.collegeAdmin']),updateBuilding);
+router.delete("/:id", checkRole(['role.collegeAdmin']), deleteBuilding);
 
 export default router;

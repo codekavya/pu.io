@@ -6,13 +6,15 @@ import path,{dirname} from "path"
 import "./db/mongoose.js";
 import * as http from "http";
 import * as socketio from "socket.io";
+import cors from 'cors'
+
 const app = express();
 const __dirname = path.resolve();
 
 const port = process.env.port || 4000;
 app.use("/public",express.static(path.join(__dirname,"public")))
 app.use(json());
-
+app.use(cors());
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Methods",

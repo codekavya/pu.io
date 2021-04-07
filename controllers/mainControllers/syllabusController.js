@@ -59,8 +59,8 @@ export async function updateSyllabuses(req, res) {
 router.get("/", getSyllabuses);
 router.get("/:id", getSyllabus);
 
-router.post("/", checkRole(["role.classAdmin"]), createSyllabus);
-router.patch("/:id", checkRole(["role.classAdmin"]), updateSyllabuses);
-router.delete("/:id", checkRole(["role.classAdmin"]), deleteSyllabuses);
+router.post("/", checkRole(["role.superAdmin"]), createSyllabus);
+router.patch("/:id", checkRole(["role.superAdmin"]), updateSyllabuses);
+router.delete("/:id", checkRole(["role.superAdmin"]), deleteSyllabuses);
 
 export default router;

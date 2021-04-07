@@ -2,7 +2,6 @@ import rn from '../public/emoji-button/dist/index.js'
 const picker = new rn();
 
 
-//TODO:Append emoji and remove send during the next emoji selection
 
 var trigger = document.querySelector('.emoji-trigger');
 var form = document.getElementById("form");

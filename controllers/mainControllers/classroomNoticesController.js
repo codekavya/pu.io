@@ -99,6 +99,11 @@ export async function deleteClassroomNotice(req, res) {
     const noticeToBeDeleted = await classroomNotices.findOne({
       _id: req.params.id,
     });
+    if (!noticeToBeDeleted)
+      return res.status(404).send({
+        Error: "No Such Notice found. It might have been already deleted"
+      })
+
     if (
       !req.roles.includes("role.superAdmin") &&
       noticeToBeDeleted.classroomId != req.user.classroom
@@ -123,6 +128,11 @@ export async function updateClassroomNotice(req, res) {
     const noticeToBeUpdated = await lassroomNotices.find({
       _id: req.params.id,
     });
+
+    if (!noticeToBeUpdated)
+      return res.status(404).send({
+        Error: "No Such Notice found. It might have been already deleted"
+      })
     if (
       !req.roles.includes("role.superAdmin") &&
       noticeToBeUpdated.classroomId != req.user.classroom

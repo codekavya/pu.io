@@ -4,6 +4,8 @@ import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
+
+//TODO:IMPLEMENT AUTH
 export async function getClassrooms(req, res) {
   try {
     const classroomList = await classrooms.find({});
@@ -58,8 +60,8 @@ export async function updateClassroom(req, res) {
 router.get("/", getClassrooms);
 router.get("/:id", getClassroom);
 
-router.post("/", checkRole(["role.superAdmin"]), createClassroom);
-router.patch("/:id", checkRole(["role.superAdmin"]), updateClassroom);
-router.delete("/:id", checkRole(["role.superAdmin"]), deleteClassroom);
+router.post("/", checkRole(["role.collegeAdmin"]), createClassroom);
+router.patch("/:id", checkRole(["role.collegeAdmin"]), updateClassroom);
+router.delete("/:id", checkRole(["role.collegeAdmin"]), deleteClassroom);
 
 export default router;

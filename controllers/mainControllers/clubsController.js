@@ -4,6 +4,8 @@ import clubs from "../../models/clubsinfo.js";
 import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
+
+//TODO:Auth needed to be implemented
 export async function getClubs(req, res) {
   try {
     const clubsList = await clubs.find({});
