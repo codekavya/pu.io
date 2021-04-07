@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+    />
 
     <style>
       body {
@@ -13,18 +17,16 @@
           Helvetica, Arial, sans-serif;
       }
 
-
-
-      .emoji-trigger{
+      .emoji-trigger {
         padding: 8px;
         margin-top: 5px;
-        margin-left:-40px;
+        margin-left: -40px;
       }
 
-      .send{
+      .send {
         padding-left: 4px;
       }
-      
+
       #form {
         background: rgba(0, 0, 0, 0.15);
         padding: 0.25rem;
@@ -80,14 +82,10 @@
     <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" />
-      <div class="emoji-trigger">
-        <i class="fas fa-smile-beam"></i>     
-      </div>
-       <button class="send">Send</button>
+      <button class="send">Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
   </body>
   <script type="module" src="../public/test.js"></script>
-
 </html>
