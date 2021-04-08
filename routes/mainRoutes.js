@@ -5,7 +5,9 @@ import auth from "../auth/auth.js";
 import checkRole from "../auth/checkRole.js";
 
 import facultiesController from "../controllers/mainControllers/facultiesController.js";
-import schoolsController from "../controllers/mainControllers/schoolsController.js";
+import schoolsController, {
+  getschools,
+} from "../controllers/mainControllers/schoolsController.js";
 import buildingsController from "../controllers/mainControllers/buildingsController.js";
 import clubsController from "../controllers/mainControllers/clubsController.js";
 import contactsController from "../controllers/mainControllers/contactsController.js";
@@ -28,7 +30,7 @@ router.use("/contacts", auth(), contactsController);
 router.use("/notices", auth(), noticesController);
 router.use("/classroom", auth(), classroomCotroller);
 router.use("/classroomNotices", auth(), classroomNoticesController);
-
+router.get("/colleges/list", getschools);
 router.get("/check", auth(), checkRole(["role.classadmin"]), (req, res) =>
   res.send("Hehe noice program")
 );

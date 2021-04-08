@@ -1,7 +1,7 @@
 import express from "express";
 const { Router } = express;
 import schools from "../../models/schoolsandcolleges.js";
-import checkRole from "../../auth/checkRole.js"
+import checkRole from "../../auth/checkRole.js";
 
 const router = Router();
 
@@ -20,7 +20,7 @@ export async function getschools(req, res) {
 export async function getAllSchools(req, res) {
   try {
     const schoolsList = await schools.find();
-   return res.send({ schools: schoolsList, count: req.count });
+    return res.send({ schools: schoolsList, count: req.count });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -40,7 +40,7 @@ export async function createSchool(req, res) {
   const school = new schools(req.body);
   try {
     await school.save();
-   return res.send({ school });
+    return res.send({ school });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
@@ -69,11 +69,10 @@ export async function updateSchool(req, res) {
   }
 }
 router.get("/", getAllSchools);
-router.get("/list", getschools);
 router.get("/:id", getschool);
 
-router.post("/",checkRole([""]), createSchool);
-router.patch("/:id",checkRole([""]), updateSchool);
-router.delete("/:id",checkRole([""]), deleteSchool);
+router.post("/", checkRole([""]), createSchool);
+router.patch("/:id", checkRole([""]), updateSchool);
+router.delete("/:id", checkRole([""]), deleteSchool);
 
 export default router;
