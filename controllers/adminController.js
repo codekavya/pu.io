@@ -8,12 +8,14 @@ import MyError from "../Errors/error.js";
 
 export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
-  console.log(user);
   try {
     await user.save();
     return res.send({ Account: user });
   } catch (E) {
-    return res.status(400).send("User with this account already exists");
+    console.log(E);
+    if (E.name === "MongoError" && E.code === 11000)
+      return res.status(409).send({ Error: "Duplicate error", E });
+    return res.status(400).send({ Error: E });
   }
 }
 export async function postLogoutAllSession(req, res, next) {

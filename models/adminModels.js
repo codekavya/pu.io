@@ -15,13 +15,25 @@ const userSchema = new Schema(
       trim: true,
       required: [true, "Enter the name"],
     },
-    Age: {
-      type: Number,
-      trim: true,
-      required: [true, "Enter your Valid Age"],
+    Username: {
+      type: String,
+      unique: true,
+      required: [true, "Choose a valid username"],
+      match: [/^[a-zA-Z0-9]+$/, "is invalid"],
+    },
+    DOB: {
+      type: Date,
+      required: [true, "Enter a valid date of birth."],
       validate(value) {
-        if (value < 18) {
-          throw new Error("Age must be greater than 18");
+        try {
+          const age = Math.floor(
+            (new Date() - new Date(value).getTime()) / 3.15576e10
+          );
+          console.log(age);
+          if (age < 18) throw new Error("Age must be greater than 18");
+        } catch (err) {
+          console.log(err);
+          throw new Error("invalid data");
         }
       },
     },
