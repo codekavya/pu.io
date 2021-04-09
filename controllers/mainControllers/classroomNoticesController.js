@@ -32,7 +32,7 @@ export async function getClassroomNotices(req, res) {
     res.send({ ...classroomNoticeList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 export async function getClassroomNotice(req, res) {
@@ -41,7 +41,7 @@ export async function getClassroomNotice(req, res) {
     res.send({ faculty, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 
@@ -73,7 +73,7 @@ export async function getMyClassroomNotice(req, res) {
     res.send({ ...myClassroomNotices, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 export async function createClassroomNotice(req, res) {
@@ -91,7 +91,7 @@ export async function createClassroomNotice(req, res) {
     res.send({ classroomNotice });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 export async function deleteClassroomNotice(req, res) {
@@ -101,8 +101,8 @@ export async function deleteClassroomNotice(req, res) {
     });
     if (!noticeToBeDeleted)
       return res.status(404).send({
-        Error: "No Such Notice found. It might have been already deleted"
-      })
+        Error: "No Such Notice found. It might have been already deleted",
+      });
 
     if (
       !req.roles.includes("role.superAdmin") &&
@@ -116,11 +116,11 @@ export async function deleteClassroomNotice(req, res) {
       req.params.id
     );
 
-    if (!classroomNotice) res.status(404).send("No items Found");
+    if (!classroomNotice) return res.status(404).send("No items Found");
     res.send({ message: "classroomNotice deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateClassroomNotice(req, res) {
@@ -131,8 +131,8 @@ export async function updateClassroomNotice(req, res) {
 
     if (!noticeToBeUpdated)
       return res.status(404).send({
-        Error: "No Such Notice found. It might have been already deleted"
-      })
+        Error: "No Such Notice found. It might have been already deleted",
+      });
     if (
       !req.roles.includes("role.superAdmin") &&
       noticeToBeUpdated.classroomId != req.user.classroom
@@ -150,7 +150,7 @@ export async function updateClassroomNotice(req, res) {
     res.send({ classroomNotice });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 //Check if the Admin is of the same class

@@ -5,9 +5,6 @@ import checkRole from "../../auth/checkRole.js";
 import colleges from "../../models/schoolsandcolleges.js";
 const router = Router();
 
-
-
-
 //TODO:TEST the endpoints
 export async function getContacts(req, res) {
   const query = {};
@@ -35,20 +32,21 @@ export async function getContacts(req, res) {
     const contactsList = await contacts.paginate(query, paginateOptions);
     res.send({ ...contactsList, count: req.count });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getContact(req, res) {
   try {
-    const contact = await contacts.
-    findOne({ _id: req.params.id }).
-    populate({
-      path:"college"
-    }).execPopulate();
+    const contact = await contacts
+      .findOne({ _id: req.params.id })
+      .populate({
+        path: "college",
+      })
+      .execPopulate();
 
     res.send({ college: contact.college, count: req.count });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -68,7 +66,7 @@ export async function createContactFromForm(req, res) {
     await contactCollege.save();
     res.send({ contact });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function createContact(req, res) {
@@ -80,34 +78,38 @@ export async function createContact(req, res) {
     await contactCollege.save();
     res.send({ contact });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
-
 export async function deleteContact(req, res) {
-  try{
+  try {
     let contact = await contacts.findById(req.params.id);
-    if (!( contact.createdBy == req.user._id || req.roles.includes("role.superAdmin") )) {
+    if (
+      !(
+        contact.createdBy == req.user._id ||
+        req.roles.includes("role.superAdmin")
+      )
+    ) {
       return res.status(401).send({
         Error: "You cannot delete this contact",
       });
     }
-  }catch(E){
-    console.log(E)
+  } catch (E) {
+    console.log(E);
     // since contact is null if contact is alraedy deleted
     //so send Response no Contact Found
     return res.status(401).send({
-      Error: "No Such Contacts"
+      Error: "No Such Contacts",
     });
   }
   try {
     const contact = await contacts.findByIdAndDelete(req.params.id);
 
-    if (!contact) res.status(404).send("No items Found");
+    if (!contact) return res.status(404).send("No items Found");
     res.send({ message: "contact deleted" });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateContact(req, res) {
@@ -137,9 +139,9 @@ export async function updateContact(req, res) {
     });
     const contact = await contacts.findOne({ _id: req.params.id });
 
-    res.send({ contact });
+    return res.send({ contact });
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 router.get("/", getContacts);
@@ -152,6 +154,10 @@ router.post(
   createContactFromForm
 );
 router.patch("/:id", checkRole(["role.collegeAdmin"]), updateContact);
-router.delete("/:id",checkRole(["role.superAdmin", "role.collegeAdmin"]),deleteContact);
+router.delete(
+  "/:id",
+  checkRole(["role.superAdmin", "role.collegeAdmin"]),
+  deleteContact
+);
 
 export default router;

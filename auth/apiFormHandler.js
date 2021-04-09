@@ -13,8 +13,9 @@ const formHandler = async (req, res, next) => {
       user.formRequested = true;
       await form.save();
       await user.save();
-      res.status(208).send({ msg: "Your Form is Under Validation" });
-    } else res.status(208).send({ msg: "Your Form is Under Validation" });
+      return res.status(208).send({ msg: "Your Form is Under Validation" });
+    } else
+      return res.status(208).send({ msg: "Your Form is Under Validation" });
   } catch (E) {
     res.send({ Error: E });
   }

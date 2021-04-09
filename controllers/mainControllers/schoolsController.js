@@ -23,7 +23,7 @@ export async function getAllSchools(req, res) {
     return res.send({ schools: schoolsList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getschool(req, res) {
@@ -32,7 +32,7 @@ export async function getschool(req, res) {
     res.send({ school, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -43,18 +43,18 @@ export async function createSchool(req, res) {
     return res.send({ school });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function deleteSchool(req, res) {
   try {
     const school = await schools.findByIdAndDelete(req.params.id);
 
-    if (!school) res.status(404).send("No items Found");
+    if (!school) return res.status(404).send({ Error: "No items Found" });
     res.send({ message: "School deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateSchool(req, res) {
@@ -65,7 +65,7 @@ export async function updateSchool(req, res) {
     res.send({ school });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 router.get("/", getAllSchools);

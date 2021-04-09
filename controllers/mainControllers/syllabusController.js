@@ -11,7 +11,7 @@ export async function getSyllabuses(req, res) {
     res.send({ syllabuses: syllabusesList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getSyllabus(req, res) {
@@ -20,7 +20,7 @@ export async function getSyllabus(req, res) {
     res.send({ syllabus, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -31,18 +31,18 @@ export async function createSyllabus(req, res) {
     res.send({ syllabus });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function deleteSyllabuses(req, res) {
   try {
     const syllabus = await syllabuses.findByIdAndDelete(req.params.id);
 
-    if (!syllabus) res.status(404).send("No items Found");
+    if (!syllabus) return res.status(404).send({ Error: "No items Found" });
     res.send({ message: "Syllabus deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateSyllabuses(req, res) {
@@ -53,7 +53,7 @@ export async function updateSyllabuses(req, res) {
     res.send({ syllabus });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 router.get("/", getSyllabuses);

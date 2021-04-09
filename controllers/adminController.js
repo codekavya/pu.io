@@ -23,7 +23,7 @@ export async function postLogoutAllSession(req, res, next) {
     req.user.tokens = [];
     await req.user.save();
   } catch (error) {
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 
@@ -44,7 +44,7 @@ export async function postUserSignIn(req, res) {
     res.json({ user: userData, token });
   } catch (error) {
     console.log(error);
-    res.status(401).send({ Error: "Error Logging", error });
+    return res.status(401).send({ Error: "Error Logging", error });
   }
 }
 
@@ -90,11 +90,11 @@ export async function deleteUser(req, res, next) {
   try {
     const usertoDelete = await Users.findByIdAndDelete(req.params.id);
     if (!usertoDelete) {
-      res.status(404).send("No user Found");
+      return res.status(404).send("No user Found");
       res.send(usertoDelete);
     }
   } catch (error) {
-    res.status(500).send({ Error: E });
+    return res.status(500).send({ Error: E });
   }
 }
 
@@ -109,9 +109,9 @@ export async function updateUser(req, res, next) {
       req.user[entry] = req.body[entry];
     });
     await req.user.save();
-    res.status(201).send();
+    return res.status(201).send(req.user);
   } catch (e) {
-    res.status(404).send(e);
+    return res.status(404).send({ Error: e });
   }
 }
 export async function postLogoutUsers(req, res, next) {
@@ -122,6 +122,6 @@ export async function postLogoutUsers(req, res, next) {
     await req.user.save();
     res.send();
   } catch (error) {
-    res.status.send(500);
+    return res.status.send(500);
   }
 }

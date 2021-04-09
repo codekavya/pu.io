@@ -4,7 +4,6 @@ import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
 const router = Router();
 
-
 //TODO:IMPLEMENT AUTH
 export async function getClassrooms(req, res) {
   try {
@@ -12,7 +11,7 @@ export async function getClassrooms(req, res) {
     res.send({ faculties: classroomList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getClassroom(req, res) {
@@ -21,7 +20,7 @@ export async function getClassroom(req, res) {
     res.send({ faculty, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -32,18 +31,18 @@ export async function createClassroom(req, res) {
     res.send({ classroom });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function deleteClassroom(req, res) {
   try {
     const classroom = await classrooms.findByIdAndDelete(req.params.id);
 
-    if (!classroom) res.status(404).send("No items Found");
+    if (!classroom) return res.status(404).send({ Error: "No items Found" });
     res.send({ message: "classroom deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateClassroom(req, res) {
@@ -51,10 +50,10 @@ export async function updateClassroom(req, res) {
     await classrooms.findByIdAndUpdate(req.params.id, req.body);
     const classroom = await classrooms.findOne({ _id: req.params.id });
 
-    res.send({ classroom });
+    return res.status(200).send({ classroom });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send(error);
   }
 }
 router.get("/", getClassrooms);

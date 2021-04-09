@@ -7,10 +7,10 @@ const router = Router();
 export async function getPrograms(req, res) {
   try {
     const programsList = await programs.find({});
-    res.send({ programs: programsList, count: req.count });
+    return res.send({ programs: programsList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getProgram(req, res) {
@@ -19,7 +19,7 @@ export async function getProgram(req, res) {
     res.send({ program, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -30,18 +30,18 @@ export async function createProgram(req, res) {
     res.send({ program });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function deleteProgram(req, res) {
   try {
     const program = await programs.findByIdAndDelete(req.params.id);
 
-    if (!program) res.status(404).send("No items Found");
+    if (!program) return res.status(404).send("No items Found");
     res.send({ message: "Program deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateProgram(req, res) {
@@ -49,10 +49,10 @@ export async function updateProgram(req, res) {
     await programs.findByIdAndUpdate(req.params.id, req.body);
     const program = await programs.findOne({ _id: req.params.id });
 
-    res.send({ program });
+    return res.send({ program });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 router.get("/", getPrograms);

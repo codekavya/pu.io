@@ -10,7 +10,7 @@ export async function getFaculties(req, res) {
     res.send({ faculties: facultyList, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function getFaculty(req, res) {
@@ -19,7 +19,7 @@ export async function getFaculty(req, res) {
     res.send({ faculty, count: req.count });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 
@@ -30,18 +30,18 @@ export async function createFaculty(req, res) {
     res.send({ faculty });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function deleteFaculty(req, res) {
   try {
     const faculty = await faculties.findByIdAndDelete(req.params.id);
 
-    if (!faculty) res.status(404).send("No items Found");
+    if (!faculty) return res.status(404).send({ Error: "No items Found" });
     res.send({ message: "Faculty deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 export async function updateFaculty(req, res) {
@@ -52,7 +52,7 @@ export async function updateFaculty(req, res) {
     res.send({ faculty });
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).send({ Error: error });
   }
 }
 router.get("/", getFaculties);
