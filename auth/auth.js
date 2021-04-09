@@ -2,6 +2,7 @@ import jsonwebtoken from "jsonwebtoken";
 const { verify, decode } = jsonwebtoken;
 import adminModels from "../models/adminModels.js";
 import apiCounts from "../models/apiModels.js";
+import { AUTH_TYPE } from "../Utils/constants.js";
 
 const auth = (type = "") => async (req, res, next) => {
   try {
@@ -20,7 +21,7 @@ const auth = (type = "") => async (req, res, next) => {
   } catch (e) {
     console.log(e);
     try {
-      if (type !== "token") {
+      if (type !== AUTH_TYPE.TOKEN) {
         const value = req.header("x-api-key");
         const key = decode(value, "TECHG123");
         const user = await adminModels.findOne({ Email: key.Email });
@@ -41,7 +42,7 @@ const auth = (type = "") => async (req, res, next) => {
           req.user = user;
           return next();
         }
-      } else if (type === "token") {
+      } else if (type === AUTH_TYPE.TOKEN) {
         return res.send({
           Error: "This route cannot be accessed with api key",
         });

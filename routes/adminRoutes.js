@@ -11,6 +11,7 @@ import {
   getApiKeyOrForm,
 } from "../controllers/adminController.js";
 import formHandler from "../auth/apiFormHandler.js";
+import { AUTH_TYPE } from "../Utils/constants.js";
 
 const router = Router();
 
@@ -30,20 +31,20 @@ router.get("/form", (req, res, next) => {
 
 router.post("/signup", postUserSignUp);
 
-router.get("/key", auth("token"), getApiKeyOrForm);
+router.get("/key", auth(AUTH_TYPE.TOKEN), getApiKeyOrForm);
 
-router.post("/key", auth("token"), formHandler);
+router.post("/key", auth(AUTH_TYPE.TOKEN), formHandler);
 
 router.post("/signin", postUserSignIn);
 
-router.get("/user/me", auth("token"), async (req, res) => {
+router.get("/user/me", auth(AUTH_TYPE.TOKEN), async (req, res) => {
   res.send(req.user);
 });
 
-router.post("user/logout", auth("token"), postLogoutUsers);
-router.post("user/logout/all", auth("token"), postLogoutAllSession);
+router.post("user/logout", auth(AUTH_TYPE.TOKEN), postLogoutUsers);
+router.post("user/logout/all", auth(AUTH_TYPE.TOKEN), postLogoutAllSession);
 
-router.delete("/users/:id", auth("token"), deleteUser);
-router.patch("/users/:id", auth("token"), updateUser);
+router.delete("/users/:id", auth(AUTH_TYPE.TOKEN), deleteUser);
+router.patch("/users/:id", auth(AUTH_TYPE.TOKEN), updateUser);
 
 export default router;
