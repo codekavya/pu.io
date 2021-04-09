@@ -2,6 +2,7 @@ import express from "express";
 const { Router } = express;
 import faculties from "../../models/faculties.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 const router = Router();
 
 export async function getFaculties(req, res) {
@@ -59,7 +60,7 @@ router.get("/", getFaculties);
 router.get("/:id", getFaculty);
 
 router.post("/", createFaculty);
-router.patch("/:id", checkRole(["role.superAdmin"]), updateFaculty);
-router.delete("/:id", checkRole(["role.superAdmin"]), deleteFaculty);
+router.patch("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), updateFaculty);
+router.delete("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), deleteFaculty);
 
 export default router;

@@ -3,6 +3,8 @@ const { Router } = express;
 import classroomNotices from "../../models/classroomNotices.js";
 import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
+
 const router = Router();
 
 export async function getClassroomNotices(req, res) {
@@ -105,7 +107,7 @@ export async function deleteClassroomNotice(req, res) {
       });
 
     if (
-      !req.roles.includes("role.superAdmin") &&
+      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
       noticeToBeDeleted.classroomId != req.user.classroom
     ) {
       return res
@@ -134,7 +136,7 @@ export async function updateClassroomNotice(req, res) {
         Error: "No Such Notice found. It might have been already deleted",
       });
     if (
-      !req.roles.includes("role.superAdmin") &&
+      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
       noticeToBeUpdated.classroomId != req.user.classroom
     ) {
       return res
@@ -155,11 +157,19 @@ export async function updateClassroomNotice(req, res) {
 }
 //Check if the Admin is of the same class
 
-router.get("/all", checkRole(["role.superAdmin"]), getClassroomNotices);
+router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getClassroomNotices);
 router.get("/all/:id", getClassroomNotice);
 router.get("/", getMyClassroomNotice);
-router.post("/", checkRole(["role.classAdmin"]), createClassroomNotice);
-router.patch("/:id", checkRole(["role.classAdmin"]), updateClassroomNotice);
-router.delete("/:id", checkRole(["role.classAdmin"]), deleteClassroomNotice);
+router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createClassroomNotice);
+router.patch(
+  "/:id",
+  checkRole([USER_ROLES.CLASS_ADMIN]),
+  updateClassroomNotice
+);
+router.delete(
+  "/:id",
+  checkRole([USER_ROLES.CLASS_ADMIN]),
+  deleteClassroomNotice
+);
 
 export default router;

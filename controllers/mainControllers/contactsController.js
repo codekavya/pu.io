@@ -3,6 +3,8 @@ const { Router } = express;
 import contacts from "../../models/contacts.js";
 import checkRole from "../../auth/checkRole.js";
 import colleges from "../../models/schoolsandcolleges.js";
+import { USER_ROLES } from "../../Utils/constants.js";
+
 const router = Router();
 
 //TODO:TEST the endpoints
@@ -88,7 +90,7 @@ export async function deleteContact(req, res) {
     if (
       !(
         contact.createdBy == req.user._id ||
-        req.roles.includes("role.superAdmin")
+        req.roles.includes(USER_ROLES.SUPER_ADMIN)
       )
     ) {
       return res.status(401).send({
@@ -117,7 +119,7 @@ export async function updateContact(req, res) {
   if (
     !(
       contact.createdBy._id == req.user._id ||
-      req.roles.includes("role.superAdmin")
+      req.roles.includes(USER_ROLES.SUPER_ADMIN)
     )
   ) {
     return res.status(401).send({
@@ -125,7 +127,7 @@ export async function updateContact(req, res) {
     });
   }
   let college;
-  if (req.roles.includes("role.superAdmin")) {
+  if (req.roles.includes(USER_ROLES.SUPER_ADMIN)) {
     college = req.body.college;
   } else {
     const reqUser = await req.user.populate("classroom").execPopulate();
@@ -147,16 +149,16 @@ export async function updateContact(req, res) {
 router.get("/", getContacts);
 router.get("/:id", getContact);
 
-router.post("/", checkRole(["role.superAdmin"]), createContact);
+router.post("/", checkRole([USER_ROLES.SUPER_ADMIN]), createContact);
 router.post(
   "/createnew",
-  checkRole(["role.collegeAdmin"]),
+  checkRole([USER_ROLES.COLLEGE_ADMIN]),
   createContactFromForm
 );
-router.patch("/:id", checkRole(["role.collegeAdmin"]), updateContact);
+router.patch("/:id", checkRole([USER_ROLES.COLLEGE_ADMIN]), updateContact);
 router.delete(
   "/:id",
-  checkRole(["role.superAdmin", "role.collegeAdmin"]),
+  checkRole([USER_ROLES.SUPER_ADMIN, USER_ROLES.COLLEGE_ADMIN]),
   deleteContact
 );
 

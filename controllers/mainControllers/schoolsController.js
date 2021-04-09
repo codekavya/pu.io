@@ -2,6 +2,7 @@ import express from "express";
 const { Router } = express;
 import schools from "../../models/schoolsandcolleges.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 
 const router = Router();
 
@@ -71,8 +72,8 @@ export async function updateSchool(req, res) {
 router.get("/", getAllSchools);
 router.get("/:id", getschool);
 
-router.post("/", checkRole([""]), createSchool);
-router.patch("/:id", checkRole([""]), updateSchool);
-router.delete("/:id", checkRole([""]), deleteSchool);
+router.post("/", checkRole([USER_ROLES.SUPER_ADMIN]), createSchool);
+router.patch("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), updateSchool);
+router.delete("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), deleteSchool);
 
 export default router;

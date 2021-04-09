@@ -1,7 +1,7 @@
 import express from "express";
-
 import buildings from "../../models/buildings.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 
 const { Router } = express;
 const router = Router();
@@ -39,7 +39,7 @@ export async function createBuilding(req, res) {
   const user = await req.user.populate("classroom").execPopulate();
 
   const college =
-    req.roles.includes("role.superAdmin") && req.body.college
+    req.roles.includes(USER_ROLES.SUPER_ADMIN) && req.body.college
       ? req.body.college
       : user.classroom.college._id;
 
@@ -74,7 +74,7 @@ export async function deleteBuilding(req, res) {
       });
     if (
       !(
-        req.user.roles.includes("role.superAdmin") ||
+        req.user.roles.includes(USER_ROLES.SUPER_ADMIN) ||
         buildingToBeDeleted.college._id.toString() ==
           populatedUser.classroom.college._id.toString()
       )
@@ -100,7 +100,7 @@ export async function updateBuilding(req, res) {
       .execPopulate();
 
     const college =
-      req.roles.includes("role.superAdmin") && req.body.college
+      req.roles.includes(USER_ROLES.SUPER_ADMIN) && req.body.college
         ? req.body.college
         : req.user.classroom.college._id;
 
@@ -118,7 +118,7 @@ export async function updateBuilding(req, res) {
       });
     if (
       !(
-        req.user.roles.includes("role.superAdmin") ||
+        req.user.roles.includes(USER_ROLES.SUPER_ADMIN) ||
         buildingToBeUpdated.college._id.toString() ==
           populatedUser.classroom.college._id.toString()
       )
@@ -137,8 +137,8 @@ export async function updateBuilding(req, res) {
 router.get("/", getBuildings);
 router.get("/:id", getBuilding);
 
-router.post("/", checkRole(["role.collegeAdmin"]), createBuilding);
-router.patch("/:id", checkRole(["role.collegeAdmin"]), updateBuilding);
-router.delete("/:id", checkRole(["role.collegeAdmin"]), deleteBuilding);
+router.post("/", checkRole([USER_ROLES.COLLEGE_ADMIN]), createBuilding);
+router.patch("/:id", checkRole([USER_ROLES.COLLEGE_ADMIN]), updateBuilding);
+router.delete("/:id", checkRole([USER_ROLES.COLLEGE_ADMIN]), deleteBuilding);
 
 export default router;

@@ -1,8 +1,9 @@
+import { USER_ROLES } from "../Utils/constants.js";
 const authenticateRole = (roles) => (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ Error: "Unable to Authorize" });
   }
-  if (req.user.roles.some((role) => role === "role.superAdmin")) {
+  if (req.user.roles.some((role) => role === USER_ROLES.SUPER_ADMIN)) {
     req.roles = req.user.roles;
     return next();
   }

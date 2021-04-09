@@ -2,7 +2,6 @@ import express from "express";
 const { Router } = express;
 
 import auth from "../auth/auth.js";
-import checkRole from "../auth/checkRole.js";
 
 import facultiesController from "../controllers/mainControllers/facultiesController.js";
 import schoolsController, {
@@ -20,7 +19,7 @@ import classroomCotroller from "../controllers/mainControllers/classroomsControl
 const router = Router();
 
 router.use("/faculties", auth(), facultiesController);
-router.use("/schoolsandcolleges", auth(), checkRole([]), schoolsController);
+router.use("/schoolsandcolleges", auth(), schoolsController);
 router.use("/programs", auth(), programsController);
 router.use("/buildings", auth(), buildingsController);
 router.use("/clubs", auth(), clubsController);

@@ -2,6 +2,7 @@ import express from "express";
 const { Router } = express;
 import programs from "../../models/programs.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 const router = Router();
 
 export async function getPrograms(req, res) {
@@ -58,8 +59,8 @@ export async function updateProgram(req, res) {
 router.get("/", getPrograms);
 router.get("/:id", getProgram);
 
-router.post("/", checkRole(["role.superAdmin"]), createProgram);
-router.patch("/:id", checkRole(["role.superAdmin"]), updateProgram);
-router.delete("/:id", checkRole(["role.superAdmin"]), deleteProgram);
+router.post("/", checkRole([USER_ROLES.SUPER_ADMIN]), createProgram);
+router.patch("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), updateProgram);
+router.delete("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), deleteProgram);
 
 export default router;

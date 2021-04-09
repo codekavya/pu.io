@@ -2,6 +2,7 @@ import express from "express";
 const { Router } = express;
 import schedules from "../../models/schedule.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 const router = Router();
 
 export async function getSchedules(req, res) {
@@ -34,7 +35,7 @@ export async function getSchedule(req, res) {
 export async function createSchedule(req, res) {
   try {
     const classroom =
-      req.roles.includes("role.superAdmin") && req.body.classroom
+      req.roles.includes(USER_ROLES.SUPER_ADMIN) && req.body.classroom
         ? req.body.classroom
         : user.classroom._id;
     const schedule = new schedules({
@@ -61,7 +62,7 @@ export async function deleteSchedule(req, res) {
 
     if (
       !(
-        req.user.roles.includes("role.superAdmin") ||
+        req.user.roles.includes(USER_ROLES.SUPER_ADMIN) ||
         scheduleToBeDeleted.classroom._id.toString() ==
           req.user.classroom._id.toString()
       )
@@ -80,7 +81,7 @@ export async function deleteSchedule(req, res) {
 export async function updateSchedule(req, res) {
   try {
     const classroom =
-      req.roles.includes("role.superAdmin") && req.body.classroom
+      req.roles.includes(USER_ROLES.SUPER_ADMIN) && req.body.classroom
         ? req.body.classroom
         : req.user.classroom._id;
     const schedule = {
@@ -97,7 +98,7 @@ export async function updateSchedule(req, res) {
     }
     if (
       !(
-        req.user.roles.includes("role.superAdmin") ||
+        req.user.roles.includes(USER_ROLES.SUPER_ADMIN) ||
         scheduleToBeUpdated.college._id.toString() ==
           populatedUser.classroom.college._id.toString()
       )
@@ -116,10 +117,10 @@ export async function updateSchedule(req, res) {
 router.get("/", getSchedules);
 router.get("/:id", getSchedule);
 
-router.post("/", checkRole(["role.classAdmin"]), createSchedule);
+router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createSchedule);
 
-router.patch("/:id", checkRole(["role.classAdmin"]), updateSchedule);
+router.patch("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), updateSchedule);
 
-router.delete("/:id", checkRole(["role.classAdmin"]), deleteSchedule);
+router.delete("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), deleteSchedule);
 
 export default router;

@@ -4,6 +4,7 @@ import clubs from "../../models/clubsinfo.js";
 import checkRole from "../../auth/checkRole.js";
 const router = Router();
 import users from "../../models/adminModels.js";
+import { USER_ROLES } from "../../Utils/constants.js";
 
 //TODO:Auth needed to be implemented
 export async function getClubs(req, res) {
@@ -34,7 +35,7 @@ export async function createClub(req, res) {
         throw new Error(`${element.member} doesn't exit.`);
       }
       if (element.canPostEvent === true) {
-        member.roles.push("role.clubManager");
+        member.roles.push(USER_ROLES.CLUB_MANAGER);
       }
       committeeMembers.push(member);
       return { ...element, member: member._id };
@@ -85,7 +86,7 @@ router.get("/", getClubs);
 router.get("/:id", getClub);
 
 router.post("/", createClub);
-router.patch("/:id", checkRole(["role.superAdmin"]), updateClub);
-router.delete("/:id", checkRole(["role.superAdmin"]), deleteClub);
+router.patch("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), updateClub);
+router.delete("/:id", checkRole([USER_ROLES.SUPER_ADMIN]), deleteClub);
 
 export default router;

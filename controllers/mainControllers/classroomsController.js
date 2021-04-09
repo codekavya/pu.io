@@ -2,6 +2,8 @@ import express from "express";
 const { Router } = express;
 import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
+import { USER_ROLES } from "../../Utils/constants.js";
+
 const router = Router();
 
 //TODO:IMPLEMENT AUTH
@@ -59,8 +61,8 @@ export async function updateClassroom(req, res) {
 router.get("/", getClassrooms);
 router.get("/:id", getClassroom);
 
-router.post("/", checkRole(["role.collegeAdmin"]), createClassroom);
-router.patch("/:id", checkRole(["role.collegeAdmin"]), updateClassroom);
-router.delete("/:id", checkRole(["role.collegeAdmin"]), deleteClassroom);
+router.post("/", checkRole([USER_ROLES.COLLEGE_ADMIN]), createClassroom);
+router.patch("/:id", checkRole([USER_ROLES.COLLEGE_ADMIN]), updateClassroom);
+router.delete("/:id", checkRole([USER_ROLES.COLLEGE_ADMIN]), deleteClassroom);
 
 export default router;
