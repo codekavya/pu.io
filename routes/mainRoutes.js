@@ -2,7 +2,6 @@ import express from "express";
 const { Router } = express;
 
 import auth from "../auth/auth.js";
-
 import facultiesController from "../controllers/mainControllers/facultiesController.js";
 import schoolsController, {
   getschools,
@@ -16,6 +15,9 @@ import programsController from "../controllers/mainControllers/programsControlle
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
 import classroomNoticesController from "../controllers/mainControllers/classroomNoticesController.js";
 import classroomCotroller from "../controllers/mainControllers/classroomsController.js";
+import { sendmail } from "../services/mailer.js";
+import { verificationMailHTML } from "../Utils/mailconstructor.js";
+
 const router = Router();
 
 router.use("/faculties", auth(), facultiesController);
@@ -31,3 +33,16 @@ router.use("/classroom", auth(), classroomCotroller);
 router.use("/classroomNotices", auth(), classroomNoticesController);
 router.get("/colleges/list", getschools);
 export default router;
+
+router.get("/testMail", () =>
+  sendmail({
+    from: '"Code Kavya👻" <noreply@codekavya.com>',
+    to: "test@gmail.com",
+    subject: "Verify your email at PU.io",
+    text: "",
+    html: verificationMailHTML(
+      "Sandesh",
+      "http://localhost:4000/verify/testURL"
+    ),
+  })
+);
