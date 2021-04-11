@@ -1,42 +1,34 @@
 import Users from "../models/adminModels.js";
 import Forms from "../models/form.js";
 import apiCounts from "../models/apiModels.js";
-import User from "../models/adminModels.js"
-import PwdResetModel from "../models/passwordResetModel.js"
-import crypto from "crypto"
-import jwt from "jsonwebtoken"
-import bcrypt from "bcryptjs"
-import {
-  sendmail
-} from "../Services/mailer.js"
-import {
-  passwordResetMailHTML
-} from "../Utils/mailconstructor.js"
-
+import User from "../models/adminModels.js";
+import PwdResetModel from "../models/passwordResetModel.js";
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { sendmail } from "../Services/mailer.js";
+import { passwordResetMailHTML } from "../Utils/mailconstructor.js";
+import path from "path";
 import config from "../config.js";
-const {
-  email
-} = config;
+const { email } = config;
 import api_Key_Generator from "../auth/apiFormHandler.js";
-import { decode } from "punycode";
-import { throws } from "assert";
 
 export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
   try {
     await user.save();
     return res.send({
-      Account: user
+      Account: user,
     });
   } catch (E) {
     console.log(E);
     if (E.name === "MongoError" && E.code === 11000)
       return res.status(409).send({
         Error: "Duplicate error",
-        E
+        E,
       });
     return res.status(400).send({
-      Error: E
+      Error: E,
     });
   }
 }
@@ -63,18 +55,18 @@ export async function postUserSignIn(req, res) {
     const userData = await user
       .populate({
         path: "classroom",
-        select: ["shortCode"]
+        select: ["shortCode"],
       })
       .execPopulate();
     res.json({
       user: userData,
-      token
+      token,
     });
   } catch (error) {
     console.log(error);
     return res.status(401).send({
       Error: "Error Logging",
-      error
+      error,
     });
   }
 }
@@ -82,10 +74,10 @@ export async function postUserSignIn(req, res) {
 export async function getApiKeyOrForm(req, res, next) {
   const user = req.user;
   const key = await apiCounts.findOne({
-    user: user._id
+    user: user._id,
   });
   const form = await Forms.findOne({
-    user: user._id
+    user: user._id,
   });
   if (!key && !form) {
     //Send the Form to Database
@@ -130,7 +122,7 @@ export async function deleteUser(req, res, next) {
     }
   } catch (error) {
     return res.status(500).send({
-      Error: E
+      Error: E,
     });
   }
 }
@@ -149,7 +141,7 @@ export async function updateUser(req, res, next) {
     return res.status(201).send(req.user);
   } catch (e) {
     return res.status(404).send({
-      Error: e
+      Error: e,
     });
   }
 }
@@ -166,41 +158,42 @@ export async function postLogoutUsers(req, res, next) {
 }
 
 export async function resetPassword(req, res, next) {
-
   try {
     const user = await Users.findOne({
-      Email: req.body.email
+      Email: req.body.email,
     });
-  
+    console.log(user);
+
     if (!user) {
-      throw new Error("Error:User doesnot exists")
+      throw new Error("User doesnot exists");
     }
-  
+
     let token = await PwdResetModel.findOne({
-      userId: user._id
+      userId: user._id,
     });
     if (token) await token.deleteOne();
-  
-    const resetToken = await generateToken(user);
-    const linkToMail = await generateLink("localhost:4000", resetToken, user)
-    console.log(linkToMail)
-    await sendmail({
-      from: email,
-      to: "reasonworld12345@gmail.com",
-      subject: "Reset Password",
-      text: "This is to notify that ",
-      html: passwordResetMailHTML(user.Name, linkToMail)
-    })
-  
-    res.send("Email Send Sucessfullly")
-    
-  } catch (error) {
-    res.send({
-      error: E.message})
 
+    const resetToken = await generateToken(user);
+    const linkToMail = await generateLink(
+      "http://localhost:4000",
+      resetToken,
+      user
+    );
+    await sendmail({
+      from: '"Code Kavya👻" <noreply@codekavya.com>',
+      to: req.body.email,
+      subject: "Verify your email at PU.io",
+      text: "test",
+      html: passwordResetMailHTML(user.Name, linkToMail.toString()),
+    });
+
+    res.send("Email Send Sucessfullly");
+  } catch (E) {
+    res.send({
+      error: E.message,
+    });
   }
-  
-};
+}
 const generateToken = async (user) => {
   //Generate New Token id;
   let resetToken = crypto.randomBytes(32).toString("hex");
@@ -208,54 +201,52 @@ const generateToken = async (user) => {
   const property = {
     userId: user._id,
     token: hash,
-    createdAt: Date.now()
-  }
-  const pwdResetDocument = await new PwdResetModel({...property}).save();
+    createdAt: Date.now(),
+  };
+  const pwdResetDocument = await new PwdResetModel({ ...property }).save();
 
-  const token = jwt.sign(property,"Thisisthemonkey")
-  return token
-}
+  const token = jwt.sign(property, "Thisisthemonkey");
+  return token;
+};
 
 const generateLink = async (clientURL, resetToken, user) => {
   const link = `${clientURL}/passwordReset/${resetToken}`;
   return link;
-}
+};
 
 export default async function checkTheUrl(req, res, next) {
-  console.log(req.method)
   //jwt payload need to be decrypted
-  const reqBodyPayLoad = req.params.id
-  try{
-    console.log(reqBodyPayLoad);
-    const decodedPwdResetDoc = jwt.decode(reqBodyPayLoad,"Thisisthemonkey")
-    console.log("Decode",decodedPwdResetDoc)
-    const passwordResetDoc = await PwdResetModel.findOne({userId: decodedPwdResetDoc.userId});
-  
+  const reqBodyPayLoad = req.params.id;
+  try {
+    const decodedPwdResetDoc = jwt.decode(reqBodyPayLoad, "Thisisthemonkey");
+    const passwordResetDoc = await PwdResetModel.findOne({
+      userId: decodedPwdResetDoc.userId,
+    });
+
     if (!passwordResetDoc) {
-      throw new Error("Invalid or Link Expired ok")  
+      throw new Error("Invalid or Link Expired ok");
     }
-    console.log(typeof decodedPwdResetDoc.token,typeof passwordResetDoc.token)
-    const isValid = decodedPwdResetDoc.token.toString()===passwordResetDoc.token.toString()
+    const isValid =
+      decodedPwdResetDoc.token.toString() === passwordResetDoc.token.toString();
     if (!isValid) {
-      throw new Error("Invalid or Link Expired ok")  
+      throw new Error("Invalid or Link Expired ok");
     }
-    if(req.method == "get"){
-      console.log("get")
-      return res.sendfile(path.join(path.resolve(),"public","view","reset.html"))
+    if (req.method == "GET") {
+      return res.sendFile(
+        path.join(process.cwd(), "public", "views", "reset.html")
+      );
     }
     const password1 = req.body.password1;
     const password2 = req.body.password2;
-    if (password1 !== password2) throw new Error("Password Doesnot Match")
+    if (password1 !== password2) throw new Error("Password Doesnot Match");
     const hash = await bcrypt.hash(password1, Number(8));
-    const user = await User.findByIdAndUpdate(decodedPwdResetDoc.userId,{Password:hash})
+    const user = await User.findByIdAndUpdate(decodedPwdResetDoc.userId, {
+      Password: hash,
+    });
     await PwdResetModel.findByIdAndDelete(passwordResetDoc._id);
-    res.send({"status":"Password Change Sucessfull"})
-    //send mail 
-  
-  }catch(E){
-    res.send(E.message)
+    res.send({ status: "Password Change Sucessfull" });
+    //send mail
+  } catch (E) {
+    res.status(401).send({ Error: E.message });
   }
-
 }
-
-

@@ -16,7 +16,10 @@ import syllabusController from "../controllers/mainControllers/syllabusControlle
 import classroomNoticesController from "../controllers/mainControllers/classroomNoticesController.js";
 import classroomCotroller from "../controllers/mainControllers/classroomsController.js";
 import { sendmail } from "../services/mailer.js";
-import { verificationMailHTML } from "../Utils/mailconstructor.js";
+import {
+  verificationMailHTML,
+  passwordResetMailHTML,
+} from "../Utils/mailconstructor.js";
 
 const router = Router();
 
@@ -37,11 +40,11 @@ export default router;
 router.get("/testMail", () =>
   sendmail({
     from: '"Code Kavya👻" <noreply@codekavya.com>',
-    to: "test@gmail.com",
+    to: "bikramparajuli000@gmail.com",
     subject: "Verify your email at PU.io",
     text: "",
-    html: verificationMailHTML(
-      "Sandesh",
+    html: passwordResetMailHTML(
+      "Bikram",
       "http://localhost:4000/verify/testURL"
     ),
   })
