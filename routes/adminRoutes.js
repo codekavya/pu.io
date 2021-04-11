@@ -1,13 +1,10 @@
-import {
-  Router,
-  urlencoded
-} from "express";
+import { Router, urlencoded } from "express";
 import auth from "../auth/auth.js";
-import User from "../models/adminModels.js"
+import User from "../models/adminModels.js";
 import bcrypt from "bcryptjs";
-import path from "path"
-import PwdResetModel from "../models/passwordResetModel.js"
-import checkTheUrl, {
+import path from "path";
+import PwdResetModel from "../models/passwordResetModel.js";
+import resetPasswordHandler, {
   deleteUser,
   updateUser,
   postLogoutUsers,
@@ -16,18 +13,18 @@ import checkTheUrl, {
   postUserSignUp,
   postreqForm,
   getApiKeyOrForm,
-  resetPassword
+  resetPassword,
 } from "../controllers/adminController.js";
 import formHandler from "../auth/apiFormHandler.js";
-import {
-  AUTH_TYPE
-} from "../Utils/constants.js";
+import { AUTH_TYPE } from "../Utils/constants.js";
 
 const router = Router();
 
-router.use(urlencoded({
-  extended: false
-}));
+router.use(
+  urlencoded({
+    extended: false,
+  })
+);
 
 //Frontend endpoints only for Development
 router.get("/login", (req, res) => {
@@ -60,22 +57,6 @@ router.delete("/users/:id", auth(AUTH_TYPE.TOKEN), deleteUser);
 router.patch("/users/:id", auth(AUTH_TYPE.TOKEN), updateUser);
 router.post("/reqreset", resetPassword);
 
-router.post("/passwordReset/:id", checkTheUrl);
-
-
-router.get("/passwordReset/:id", checkTheUrl)
-// router.get("/reset/:id", async (req, res, next) => {
-//   const uid = req.params.id
-//   req.uid = uid
-// },async ()=>{
-//   const password1 = req.body.password1;
-//   const password2 = req.body.password2;
-//   if (password1 !== password2) return res.send("Password Doesnot Match")
-//   const hash = await bcrypt.hash(password1, Number(8));
-//   const user = await User.findByIdAndUpdate(req.uid,{Password:hash})
-//   await PwdResetModel.findByIdAndDelete(req.uid);
-//   res.send({"status":"Password Change Sucessfull"})
-//   //send mail 
-// })
-
+router.post("/passwordReset/:id", resetPasswordHandler);
+router.get("/passwordReset/:id", resetPasswordHandler);
 export default router;

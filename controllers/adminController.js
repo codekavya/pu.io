@@ -214,7 +214,7 @@ const generateLink = async (clientURL, resetToken, user) => {
   return link;
 };
 
-export default async function checkTheUrl(req, res, next) {
+export default async function resetPasswordHandler(req, res, next) {
   //jwt payload need to be decrypted
   const reqBodyPayLoad = req.params.id;
   try {
