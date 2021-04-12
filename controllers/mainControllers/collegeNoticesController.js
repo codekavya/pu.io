@@ -163,13 +163,20 @@ export async function updateCollegeNotice(req, res) {
     return res.status(500).send({ Error: error });
   }
 }
-//Check if the Admin is of the same class
 
 router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getCollegeNotices);
 router.get("/all/:id", getCollegeNotice);
 router.get("/", getMyCollegeNotice);
-router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createCollegeNotice);
-router.patch("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), updateCollegeNotice);
-router.delete("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), deleteCollegeNotice);
+router.post("/", checkRole([USER_ROLES.COLLEGE_ADMIN]), createCollegeNotice);
+router.patch(
+  "/:id",
+  checkRole([USER_ROLES.COLLEGE_ADMIN]),
+  updateCollegeNotice
+);
+router.delete(
+  "/:id",
+  checkRole([USER_ROLES.COLLEGE_ADMIN]),
+  deleteCollegeNotice
+);
 
 export default router;
