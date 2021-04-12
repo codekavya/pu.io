@@ -1,19 +1,19 @@
 import express from "express";
 const { Router } = express;
-import classroomNotices from "../../models/classroomNotices.js";
-import classrooms from "../../models/classrooms.js";
+import collegeNotices from "../../models/collegeNotices.js";
+import colleges from "../../models/schoolsandcolleges.js";
 import checkRole from "../../auth/checkRole.js";
 import { USER_ROLES } from "../../Utils/constants.js";
 
 const router = Router();
 
-export async function getClassroomNotices(req, res) {
+export async function getCollegeNotices(req, res) {
   const query = {};
   const paginateOptions = {
     page: 1,
     limit: 20,
     customLabels: {
-      docs: "classroomNotices",
+      docs: "collegeNotices",
     },
   };
   req.query.page && (paginateOptions.page = req.query.page);
@@ -27,19 +27,19 @@ export async function getClassroomNotices(req, res) {
   }
   console.log(query);
   try {
-    const classroomNoticeList = await classroomNotices.paginate(
+    const collegeNoticeList = await collegeNotices.paginate(
       query,
       paginateOptions
     );
-    res.send({ ...classroomNoticeList, count: req.count });
+    res.send({ ...collegeNoticeList, count: req.count });
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
   }
 }
-export async function getClassroomNotice(req, res) {
+export async function getCollegeNotice(req, res) {
   try {
-    const faculty = await classroomNotices.findOne({ _id: req.params.id });
+    const faculty = await collegeNotices.findOne({ _id: req.params.id });
     res.send({ faculty, count: req.count });
   } catch (error) {
     console.log(error);
@@ -47,13 +47,13 @@ export async function getClassroomNotice(req, res) {
   }
 }
 
-export async function getMyClassroomNotice(req, res) {
+export async function getMyCollegeNotice(req, res) {
   const query = {};
   const paginateOptions = {
     page: 1,
     limit: 20,
     customLabels: {
-      docs: "classroomNotices",
+      docs: "collegeNotices",
     },
   };
   req.query.page && (paginateOptions.page = req.query.page);
@@ -65,67 +65,66 @@ export async function getMyClassroomNotice(req, res) {
       { description: { $regex: new RegExp(req.query.s), $options: "i" } },
     ];
   }
-  query["classroom"] = req.user.classroom._id;
+  const fullUser = await req.user.populate("classroom").execPopulate();
+  query["college"] = fullUser.classroom.college._id;
   console.log(query);
   try {
-    const myClassroomNotices = await classroomNotices.paginate(
+    const mycollegeNotices = await collegeNotices.paginate(
       query,
       paginateOptions
     );
-    res.send({ ...myClassroomNotices, count: req.count });
+    res.send({ ...mycollegeNotices, count: req.count });
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
   }
 }
-export async function createClassroomNotice(req, res) {
+export async function createCollegeNotice(req, res) {
   const user = await req.user.populate("classroom").execPopulate();
-  const classroom = await classrooms.findById(user.classroom._id);
-  const classroomNotice = new classroomNotices({
+  const college = await colleges.findById(user.classroom.college._id);
+  const collegeNotice = new collegeNotices({
     ...req.body,
-    classroom: classroom._id,
+    college: college._id,
     creator: user._id,
   });
   try {
-    await classroomNotice.save();
-    classroom.notices.push(classroomNotice);
-    await classroom.save();
-    res.send({ classroomNotice });
+    await collegeNotice.save();
+    college.notices.push(collegeNotice);
+    await college.save();
+    res.send({ collegeNotice });
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
   }
 }
-export async function deleteClassroomNotice(req, res) {
+export async function deleteCollegeNotice(req, res) {
   try {
-    const noticeToBeDeleted = await classroomNotices.findOne({
+    const noticeToBeDeleted = await collegeNotices.findOne({
       _id: req.params.id,
     });
     if (!noticeToBeDeleted)
       return res.status(404).send({
         Error: "No Such Notice found. It might have been already deleted",
       });
-
+    const fullUser = await req.user.populate("classroom").execPopulate();
     if (
       !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeDeleted.classroom._id != req.user.classroom._id
+      noticeToBeDeleted.college._id != fullUser.classroom.college._id
     ) {
       return res
         .status(401)
-        .send({ Error: "You cannot delete notice from other classrooms" });
+        .send({ Error: "You cannot delete notice from other colleges" });
     }
-    const classroomNotice = await classroomNotices.findByIdAndDelete(
-      req.params.id
-    );
+    const collegeNotice = await collegeNotices.findByIdAndDelete(req.params.id);
 
-    if (!classroomNotice) return res.status(404).send("No items Found");
-    res.send({ message: "classroomNotice deleted" });
+    if (!collegeNotice) return res.status(404).send("No items Found");
+    res.send({ message: "collegeNotice deleted" });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ Error: error });
   }
 }
-export async function updateClassroomNotice(req, res) {
+export async function updateCollegeNotice(req, res) {
   try {
     const noticeToBeUpdated = await lassroomNotices.find({
       _id: req.params.id,
@@ -135,21 +134,22 @@ export async function updateClassroomNotice(req, res) {
       return res.status(404).send({
         Error: "No Such Notice found. It might have been already deleted",
       });
+    const fullUser = await req.user.populate("classroom").execPopulate();
     if (
       !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeUpdated.classroom != req.user.classroom._id
+      noticeToBeUpdated.college._id != req.user.classroom.college._id
     ) {
       return res
         .status(401)
-        .send({ Error: "You cannot edit notice from other classrooms" });
+        .send({ Error: "You cannot edit notice from other colleges" });
     }
-    await classroomNotices.findByIdAndUpdate(req.params.id, req.body);
+    await collegeNotices.findByIdAndUpdate(req.params.id, req.body);
 
-    const classroomNotices = await classroomNotices.findOne({
+    const collegeNotices = await collegeNotices.findOne({
       _id: req.params.id,
     });
 
-    res.send({ classroomNotice });
+    res.send({ collegeNotice });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ Error: error });
@@ -157,19 +157,11 @@ export async function updateClassroomNotice(req, res) {
 }
 //Check if the Admin is of the same class
 
-router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getClassroomNotices);
-router.get("/all/:id", getClassroomNotice);
-router.get("/", getMyClassroomNotice);
-router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createClassroomNotice);
-router.patch(
-  "/:id",
-  checkRole([USER_ROLES.CLASS_ADMIN]),
-  updateClassroomNotice
-);
-router.delete(
-  "/:id",
-  checkRole([USER_ROLES.CLASS_ADMIN]),
-  deleteClassroomNotice
-);
+router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getCollegeNotices);
+router.get("/all/:id", getcollegeNotice);
+router.get("/", getMycollegeNotice);
+router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createCollegeNotice);
+router.patch("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), updateCollegeNotice);
+router.delete("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), deleteCollegeNotice);
 
 export default router;

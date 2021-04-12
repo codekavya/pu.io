@@ -3,7 +3,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
-const collegeNoticesSchema = new Schema(
+const classroomNoticesSchema = new Schema(
   {
     title: {
       type: String,
@@ -25,7 +25,7 @@ const collegeNoticesSchema = new Schema(
     timestamps: true,
   }
 );
-collegeNoticesSchema.plugin(mongoosePaginate);
-const collegeNotices = model("collegeNotices", collegeNoticesSchema);
+classroomNoticesSchema.plugin(mongoosePaginate);
+const classroomNotices = model("collegeNotices", classroomNoticesSchema);
 
-export default collegeNotices;
+export default classroomNotices;
