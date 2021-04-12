@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { PLACEHOLDER_IMAGES } from "../Utils/constants";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants.js";
 
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;

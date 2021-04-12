@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PLACEHOLDER_IMAGES } from "../Utils/constants";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants.js";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
