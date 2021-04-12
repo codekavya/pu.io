@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
@@ -12,6 +13,10 @@ const chatSchema = new Schema(
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "admins",
+    },
+    chatroomPhoto: {
+      type: String,
+      default: PLACEHOLDER_IMAGES.CHATROOM_PHOTO,
     },
     RoomMembers: [
       {

@@ -13,9 +13,11 @@ const eventsSchema = new Schema(
     description: {
       type: String,
     },
-    attachment: {
-      type: String,
-    },
+    attachments: [
+      {
+        type: String,
+      },
+    ],
     club: { type: Schema.Types.ObjectId, ref: "clubs" },
     type: {
       type: String,

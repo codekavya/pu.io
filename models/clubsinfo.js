@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
@@ -10,6 +11,10 @@ const clubsSchema = new Schema({
   description: {
     type: String,
     required: true,
+  },
+  clubLogo: {
+    type: String,
+    default: PLACEHOLDER_IMAGES.CLUB_LOGO,
   },
   committee: [
     {

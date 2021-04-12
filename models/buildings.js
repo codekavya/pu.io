@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
@@ -15,6 +16,7 @@ const buildingsSchema = new Schema({
   },
   photoUrl: {
     type: String,
+    default: PLACEHOLDER_IMAGES.BUILDING_PHOTO,
   },
   googleMap: {
     type: String,

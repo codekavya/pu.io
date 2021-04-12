@@ -7,6 +7,7 @@ const { compare, hash } = bcryptjs;
 import jwt from "jsonwebtoken";
 const { sign } = jwt;
 import Error from "../Errors/error.js";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants.js";
 
 const userSchema = new Schema(
   {
@@ -14,6 +15,10 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       required: [true, "Enter the name"],
+    },
+    photoUrl: {
+      type: String,
+      default: PLACEHOLDER_IMAGES.PROFILE_PHOTO,
     },
     Username: {
       type: String,

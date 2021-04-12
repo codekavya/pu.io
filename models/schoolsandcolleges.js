@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants";
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
 
@@ -22,6 +23,7 @@ const schoolsandcollegesSchema = new Schema({
   website: {
     type: String,
   },
+  photoUrl: { type: String, default: PLACEHOLDER_IMAGES.COLLEGE_PHOTO },
   contacts: [{ type: Schema.Types.ObjectId, ref: "contacts" }],
   faculties: [{ type: Schema.Types.ObjectId, ref: "clubs" }],
   buildings: [{ type: Schema.Types.ObjectId, ref: "buildings" }],

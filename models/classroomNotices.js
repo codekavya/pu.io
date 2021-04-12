@@ -16,6 +16,7 @@ const classroomNoticesSchema = new Schema(
     classroom: { type: Schema.Types.ObjectId, ref: "classrooms" },
     creator: { type: Schema.Types.ObjectId, ref: "admins" },
     validTill: Date,
+    attachments: [String],
     type: {
       type: String,
     },

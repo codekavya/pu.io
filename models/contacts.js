@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import { PLACEHOLDER_IMAGES } from "../Utils/constants";
 
 const { Schema: _Schema, model } = mongoose;
 const Schema = _Schema;
@@ -12,6 +13,10 @@ const contactsSchema = new Schema(
     },
     description: {
       type: String,
+    },
+    contactPhoto: {
+      type: String,
+      default: PLACEHOLDER_IMAGES.CONTACT_PHOTO,
     },
     email: [
       {
