@@ -29,6 +29,7 @@ const schoolsandcollegesSchema = new Schema({
   buildings: [{ type: Schema.Types.ObjectId, ref: "buildings" }],
   classes: [{ type: Schema.Types.ObjectId, ref: "classrooms" }],
   programs: [{ type: Schema.Types.ObjectId, ref: "programs" }],
+  notices: [{ type: Schema.Types.ObjectId, ref: "collegeNotices" }],
 });
 
 export default model("colleges", schoolsandcollegesSchema);

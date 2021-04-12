@@ -15,6 +15,7 @@ import programsController from "../controllers/mainControllers/programsControlle
 import syllabusController from "../controllers/mainControllers/syllabusController.js";
 import classroomNoticesController from "../controllers/mainControllers/classroomNoticesController.js";
 import classroomCotroller from "../controllers/mainControllers/classroomsController.js";
+import collegeNoticesController from "../controllers/mainControllers/collegeNoticesController.js";
 const router = Router();
 
 router.use("/faculties", auth(), facultiesController);
@@ -28,5 +29,6 @@ router.use("/contacts", auth(), contactsController);
 router.use("/notices", auth(), noticesController);
 router.use("/classroom", auth(), classroomCotroller);
 router.use("/classroomNotices", auth(), classroomNoticesController);
+router.use("/collegeNotices", auth(), collegeNoticesController);
 router.get("/colleges/list", getschools);
 export default router;

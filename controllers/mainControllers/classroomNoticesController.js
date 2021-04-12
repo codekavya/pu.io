@@ -80,6 +80,7 @@ export async function getMyClassroomNotice(req, res) {
 }
 export async function createClassroomNotice(req, res) {
   const user = await req.user.populate("classroom").execPopulate();
+  console.log(user);
   const classroom = await classrooms.findById(user.classroom._id);
   const classroomNotice = new classroomNotices({
     ...req.body,
@@ -107,8 +108,11 @@ export async function deleteClassroomNotice(req, res) {
       });
 
     if (
-      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeDeleted.classroom._id != req.user.classroom._id
+      !(
+        req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
+        noticeToBeDeleted.classroom._id.toString() ===
+          req.user.classroom._id.toString()
+      )
     ) {
       return res
         .status(401)
@@ -127,17 +131,25 @@ export async function deleteClassroomNotice(req, res) {
 }
 export async function updateClassroomNotice(req, res) {
   try {
-    const noticeToBeUpdated = await lassroomNotices.find({
-      _id: req.params.id,
-    });
+    const noticeToBeUpdated = await classroomNotices
+      .findOne({
+        _id: req.params.id,
+      })
+      .populate("classroom");
 
     if (!noticeToBeUpdated)
       return res.status(404).send({
         Error: "No Such Notice found. It might have been already deleted",
       });
+
+    const user = await req.user.populate("classroom").execPopulate();
+    console.log(noticeToBeUpdated.classroom._id, user.classroom._id);
     if (
-      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeUpdated.classroom != req.user.classroom._id
+      !(
+        req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
+        noticeToBeUpdated.classroom._id.toString() ===
+          user.classroom._id.toString()
+      )
     ) {
       return res
         .status(401)
@@ -145,11 +157,11 @@ export async function updateClassroomNotice(req, res) {
     }
     await classroomNotices.findByIdAndUpdate(req.params.id, req.body);
 
-    const classroomNotices = await classroomNotices.findOne({
+    const classroomNoticesList = await classroomNotices.findOne({
       _id: req.params.id,
     });
 
-    res.send({ classroomNotice });
+    res.send({ classroomNoticesList });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ Error: error });

@@ -82,6 +82,7 @@ export async function getMyCollegeNotice(req, res) {
 export async function createCollegeNotice(req, res) {
   const user = await req.user.populate("classroom").execPopulate();
   const college = await colleges.findById(user.classroom.college._id);
+  console.log(college);
   const collegeNotice = new collegeNotices({
     ...req.body,
     college: college._id,
@@ -89,6 +90,7 @@ export async function createCollegeNotice(req, res) {
   });
   try {
     await collegeNotice.save();
+    console.log(college.notices);
     college.notices.push(collegeNotice);
     await college.save();
     res.send({ collegeNotice });
@@ -108,8 +110,11 @@ export async function deleteCollegeNotice(req, res) {
       });
     const fullUser = await req.user.populate("classroom").execPopulate();
     if (
-      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeDeleted.college._id != fullUser.classroom.college._id
+      !(
+        req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
+        noticeToBeDeleted.college._id.toString() ===
+          fullUser.classroom.college._id.toString()
+      )
     ) {
       return res
         .status(401)
@@ -126,7 +131,7 @@ export async function deleteCollegeNotice(req, res) {
 }
 export async function updateCollegeNotice(req, res) {
   try {
-    const noticeToBeUpdated = await lassroomNotices.find({
+    const noticeToBeUpdated = await collegeNotices.findOne({
       _id: req.params.id,
     });
 
@@ -136,8 +141,11 @@ export async function updateCollegeNotice(req, res) {
       });
     const fullUser = await req.user.populate("classroom").execPopulate();
     if (
-      !req.roles.includes(USER_ROLES.SUPER_ADMIN) &&
-      noticeToBeUpdated.college._id != req.user.classroom.college._id
+      !(
+        req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
+        noticeToBeUpdated.college._id.toString() ===
+          fullUser.classroom.college._id.toString()
+      )
     ) {
       return res
         .status(401)
@@ -145,7 +153,7 @@ export async function updateCollegeNotice(req, res) {
     }
     await collegeNotices.findByIdAndUpdate(req.params.id, req.body);
 
-    const collegeNotices = await collegeNotices.findOne({
+    const collegeNotice = await collegeNotices.findOne({
       _id: req.params.id,
     });
 
@@ -158,8 +166,8 @@ export async function updateCollegeNotice(req, res) {
 //Check if the Admin is of the same class
 
 router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getCollegeNotices);
-router.get("/all/:id", getcollegeNotice);
-router.get("/", getMycollegeNotice);
+router.get("/all/:id", getCollegeNotice);
+router.get("/", getMyCollegeNotice);
 router.post("/", checkRole([USER_ROLES.CLASS_ADMIN]), createCollegeNotice);
 router.patch("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), updateCollegeNotice);
 router.delete("/:id", checkRole([USER_ROLES.CLASS_ADMIN]), deleteCollegeNotice);
