@@ -15,6 +15,10 @@ const auth = (type = "") => async (req, res, next) => {
     if (!user) {
       throw new Error();
     }
+    if (!user.isEmailVerified) {
+      throw new Error("Verify your Email first....");
+    }
+    
     req.token = token;
     req.user = user;
     return next();
@@ -47,9 +51,9 @@ const auth = (type = "") => async (req, res, next) => {
           Error: "This route cannot be accessed with api key",
         });
       }
-    } catch (e) {
-      console.log(e);
-      res.send({ Error: "Unable to Authorize" });
+    } catch (E) {
+      console.log(E);
+      res.send({ Error:E.message });
     }
   }
 };

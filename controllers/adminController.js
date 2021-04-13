@@ -3,22 +3,41 @@ import Forms from "../models/form.js";
 import apiCounts from "../models/apiModels.js";
 import User from "../models/adminModels.js";
 import PwdResetModel from "../models/passwordResetModel.js";
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
 import { sendmail } from "../Services/mailer.js";
 import { passwordResetMailHTML } from "../Utils/mailconstructor.js";
 import path from "path";
-import config from "../config.js";
-const { email } = config;
+import {verificationMailHTML} from "../Utils/mailconstructor.js"
+import {generateLink, generateToken} from "../Utils/generator.js"
+import UserVerifictionModel from "../models/userVeificationModel.js"
 import api_Key_Generator from "../auth/apiFormHandler.js";
+import { decode } from "punycode";
+import EmailVerificationModel from "../models/userVeificationModel.js";
 
+
+//isEmail Verified and isUserVerified
 export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
   try {
+    const Document = await generateToken(user)
     await user.save();
+    const verificationDoc = new UserVerifictionModel({...Document})
+    await verificationDoc.save();
+    const jwtsignedDoc = jwt.sign(Document,"Thisisthemonkey")
+    const link = await generateLink('http://localhost:4000',"verifyEmail",jwtsignedDoc.toString())
+    console.log({
+      jwtsignedDoc,
+      link
+    })
+    await sendmail({
+      from: '"Code Kavya👻" <noreply@codekavya.com>',    
+      to:user.Email,
+      subject:"Email Verification",
+      text:"Demo Text",
+      html:verificationMailHTML(user.Username, link.toString())
+    })
     return res.send({
-      Account: user,
+      message:"Account Under Verification. Confirm by checking the mail."
     });
   } catch (E) {
     console.log(E);
@@ -28,7 +47,7 @@ export async function postUserSignUp(req, res) {
         E,
       });
     return res.status(400).send({
-      Error: E,
+      Error: E.message,
     });
   }
 }
@@ -47,6 +66,9 @@ export async function postUserSignIn(req, res) {
       req.body.Email,
       req.body.Password
     );
+    if(!user.isEmailVerified){
+      return res.send("Email Under Verification..Please Check your mail.")
+    } 
     const token = await user.getToken();
     res.set({
       "Content-Type": "application/json",
@@ -63,7 +85,6 @@ export async function postUserSignIn(req, res) {
       token,
     });
   } catch (error) {
-    console.log(error);
     return res.status(401).send({
       Error: "Error Logging",
       error,
@@ -162,7 +183,6 @@ export async function resetPassword(req, res, next) {
     const user = await Users.findOne({
       Email: req.body.email,
     });
-    console.log(user);
 
     if (!user) {
       throw new Error("User doesnot exists");
@@ -173,18 +193,17 @@ export async function resetPassword(req, res, next) {
     });
     if (token) await token.deleteOne();
 
-    const resetToken = await generateToken(user);
-    const linkToMail = await generateLink(
-      "http://localhost:4000",
-      resetToken,
-      user
-    );
+    const Document = await generateToken();
+    await  new PwdResetModel({...Document}).save();
+    const jwtsignedDoc = jwt.sign(Document,"Thisisthemonkey")
+    const generateLink = await generateLink("http://localhost:4000",'passwordReset',jwtsignedDoc);
+    console.log(generateLink)
     await sendmail({
       from: '"Code Kavya👻" <noreply@codekavya.com>',
       to: req.body.email,
       subject: "Verify your email at PU.io",
       text: "test",
-      html: passwordResetMailHTML(user.Name, linkToMail.toString()),
+      html: passwordResetMailHTML(user.Name, generateLink),
     });
 
     res.send("Email Send Sucessfullly");
@@ -193,26 +212,36 @@ export async function resetPassword(req, res, next) {
       error: E.message,
     });
   }
+};
+
+
+
+
+export const EmailVerification  =  async (req,res,next)=>{
+  const reqBodyPayLoad = req.params.id;
+try {
+  const decodedVerificationDoc = jwt.decode(reqBodyPayLoad, "Thisisthemonkey");
+  const emailVerificationDoc = await EmailVerificationModel.findOne({
+    userId: decodedVerificationDoc.userId,
+  });
+  if(!emailVerificationDoc){
+    throw new Error("Invalid Link!!!")
+  }
+  const user = await Users.findById(decodedVerificationDoc.userId)
+  user.isEmailVerified = true;
+  await user.save();
+  res.status(200).send("Email Verified Succesfully")
+  await emailVerificationDoc.deleteOne();
+} catch (E) {
+  res.status(404).send({
+    Error:E.message
+  })
+
 }
-const generateToken = async (user) => {
-  //Generate New Token id;
-  let resetToken = crypto.randomBytes(32).toString("hex");
-  const hash = await bcrypt.hash(resetToken, 7);
-  const property = {
-    userId: user._id,
-    token: hash,
-    createdAt: Date.now(),
-  };
-  const pwdResetDocument = await new PwdResetModel({ ...property }).save();
+ 
+}
 
-  const token = jwt.sign(property, "Thisisthemonkey");
-  return token;
-};
-
-const generateLink = async (clientURL, resetToken, user) => {
-  const link = `${clientURL}/passwordReset/${resetToken}`;
-  return link;
-};
+   
 
 export default async function resetPasswordHandler(req, res, next) {
   //jwt payload need to be decrypted

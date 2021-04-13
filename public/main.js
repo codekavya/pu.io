@@ -1,24 +1,50 @@
-// var socket = io();
-// var form = document.getElementById("form");
-// var input = document.getElementById("input");
-// var roomname = document.getElementById("room_name");
+var form = document.getElementById("form");
+var input = document.getElementById("input");
 
-// form.addEventListener("submit", function (e) {
+//Socket logic
+var socket = io();
+document.querySelector(".send").addEventListener("click", (e) => {
+  if (input.value) {
+    e.preventDefault();
+    socket.emit("message", input.value);
+    input.value = "";
+  }
+});
+// form.addEventListener(".send", function (e) {
 //   e.preventDefault();
 //   if (input.value) {
-//     socket.emit("data", {
-//       input: input.value,
-//       roomName: roomname.value
-//     });
-    
+//     socket.emit("message", input.value);
 //     input.value = "";
 //   }
 // });
-// socket.on("message", function (msg) {
-//   var item = document.createElement("li");
-//   item.textContent = msg;
-//   messages.appendChild(item);
-//   window.scrollTo(0, document.body.scrollHeight);
 
-// });
+socket.on("messageObj", function (msgObj) {
+  const message = {
+    message: msgObj.message,
+    messageBy: msgObj.messageBy.Name,
+    sendAt: msgObj.messageSentAt,
+  };
+  var item = document.createElement("li");
+  item.textContent = `${msgObj.messageBy}: ${msgObj.message}`;
+  messages.appendChild(item);
+  window.scrollTo(0, document.body.scrollHeight);
+});
+//Query extractor
+const roomid = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
 
+socket.on("database-messages", (msg) => {
+  for (let index = 0; index < msg.length; index++) {
+    let messageFromServer;
+    const element = msg[index];
+    messageFromServer = element.message;
+
+    var item = document.createElement("li");
+    item.textContent = `${element.messageBy.Name}: ${messageFromServer}`;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+});
+
+socket.emit("room", roomid.id);

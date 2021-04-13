@@ -20,6 +20,12 @@ const userSchema = new Schema(
       type: String,
       default: PLACEHOLDER_IMAGES.PROFILE_PHOTO,
     },
+
+    isEmailVerified:{
+      type:Boolean,
+      default:false
+    },
+    
     Username: {
       type: String,
       unique: true,
