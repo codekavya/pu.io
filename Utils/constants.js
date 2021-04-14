@@ -17,4 +17,5 @@ export const PLACEHOLDER_IMAGES = {
   CLUB_LOGO: "",
   CONTACT_PHOTO: "",
   COLLEGE_PHOTO: "",
+  EVENT_BANNER: "",
 };

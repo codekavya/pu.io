@@ -6,7 +6,8 @@ import { AUTH_TYPE } from "../Utils/constants.js";
 
 const auth = (type = "") => async (req, res, next) => {
   try {
-    const token = req.header("Cookie").replace("SKey=Bearer ", "");
+    // if (!req.header("Authorization")) throw new Error("No Auth Header");
+    const token = req.header("Authorization").replace("SKey=Bearer ", "");
     const payload = verify(token, "thisisdemokey");
     const user = await adminModels.findOne({
       _id: payload._id,
@@ -22,15 +23,18 @@ const auth = (type = "") => async (req, res, next) => {
     console.log(e);
     try {
       if (type !== AUTH_TYPE.TOKEN) {
+        if (!req.header("x-api-key")) throw new Error();
         const value = req.header("x-api-key");
-        const key = decode(value, "TECHG123");
-        const user = await adminModels.findOne({ Email: key.Email });
-        if (!user) {
-          return res.status(404).send({ Error: "Server Error" });
+        console.log(value);
+        const api = await apiCounts.findOne({ ApiKey: value });
+        console.log(api);
+        if (!api) {
+          return res.status(404).send({ Error: "Invalid api key" });
         }
-        const api = await apiCounts.findOne({ Apikey: user.apikey });
+        const user = await adminModels.findById(api.user._id);
+        console.log(user);
         if (api.TodayHits >= api.DailyLimit) {
-          res
+          return res
             .status(429)
             .send({ Error: "You have reached your daily API usage limit" });
         } else {
@@ -42,14 +46,16 @@ const auth = (type = "") => async (req, res, next) => {
           req.user = user;
           return next();
         }
-      } else if (type === AUTH_TYPE.TOKEN) {
+      } else if (type === AUTH_TYPE.TOKEN && req.header("x-api-key")) {
         return res.send({
           Error: "This route cannot be accessed with api key",
         });
+      } else {
+        throw new Error();
       }
     } catch (e) {
       console.log(e);
-      res.send({ Error: "Unable to Authorize" });
+      return res.send({ Error: "Unable to Authorize" });
     }
   }
 };
