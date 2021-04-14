@@ -72,7 +72,6 @@ export async function postUserSignIn(req, res) {
     const token = await user.getToken();
     res.set({
       "Content-Type": "application/json",
-      "Set-Cookie": `SKey = Bearer ${token}`,
     });
     const userData = await user
       .populate({
@@ -206,10 +205,10 @@ export async function resetPassword(req, res, next) {
       html: passwordResetMailHTML(user.Name, generateLink),
     });
 
-    res.send("Email Send Sucessfullly");
+    res.send({ status: "Email Send Sucessfullly" });
   } catch (E) {
     res.send({
-      error: E.message,
+      Error: E.message,
     });
   }
 };

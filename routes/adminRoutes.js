@@ -50,6 +50,9 @@ router.get("/key", auth(AUTH_TYPE.TOKEN), getApiKeyOrForm);
 router.post("/key", auth(AUTH_TYPE.TOKEN), formHandler);
 
 router.post("/signin", postUserSignIn);
+router.get("/verify-token", auth(AUTH_TYPE.TOKEN), (req, res) =>
+  res.status(200).send({ Auth: true, Status: "Token verified", user: req.user })
+);
 
 router.get("/user/me", auth(AUTH_TYPE.TOKEN), async (req, res) => {
   res.send(req.user);

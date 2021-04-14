@@ -24,6 +24,6 @@ const apiCountsSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "admins" },
 });
 
-const apiCounts = model("apiCounts", apiCountsSchema);
+const apiCounts = model("apicounts", apiCountsSchema);
 
 export default apiCounts;

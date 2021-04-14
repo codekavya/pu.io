@@ -40,7 +40,6 @@ const userSchema = new Schema(
           const age = Math.floor(
             (new Date() - new Date(value).getTime()) / 3.15576e10
           );
-          console.log(age);
           if (age < 18) throw new Error("Age must be greater than 18");
         } catch (err) {
           console.log(err);
