@@ -25,10 +25,7 @@ export async function postUserSignUp(req, res) {
     await verificationDoc.save();
     const jwtsignedDoc = jwt.sign(Document,"Thisisthemonkey")
     const link = await generateLink('http://localhost:4000',"verifyEmail",jwtsignedDoc.toString())
-    console.log({
-      jwtsignedDoc,
-      link
-    })
+
     await sendmail({
       from: '"Code Kavya👻" <noreply@codekavya.com>',    
       to:user.Email,
@@ -51,6 +48,44 @@ export async function postUserSignUp(req, res) {
     });
   }
 }
+
+export async function resetPassword(req, res, next) {
+  try {
+    const user = await Users.findOne({
+      Email: req.body.email,
+    });
+
+    if (!user) {
+      throw new Error("User doesnot exists");
+    }
+
+    const token = await PwdResetModel.findOne({
+      userId: user.id,
+    });
+    console.log(user._id)
+    if (token) await token.deleteOne();
+
+    const Document = await generateToken(user);
+    const newResetDocument =   new PwdResetModel({...Document});
+    await newResetDocument.save();
+    const jwtsignedDoc = jwt.sign(Document,"Thisisthemonkey")
+    const link = await generateLink("http://localhost:4000",'passwordReset',jwtsignedDoc.toString()) 
+    await sendmail({
+      from: '"Code Kavya👻" <noreply@codekavya.com>',
+      to: req.body.email,
+      subject: "Verify your email at PU.io",
+      text: "test",
+      html: passwordResetMailHTML(user.Name, link)
+    });
+
+    res.send({ status: "Email Send Sucessfullly" });
+  } catch (E) {
+    res.send({
+      Error: E.message,
+    });
+  }
+};
+
 export async function postLogoutAllSession(req, res, next) {
   try {
     req.user.tokens = [];
@@ -177,41 +212,6 @@ export async function postLogoutUsers(req, res, next) {
   }
 }
 
-export async function resetPassword(req, res, next) {
-  try {
-    const user = await Users.findOne({
-      Email: req.body.email,
-    });
-
-    if (!user) {
-      throw new Error("User doesnot exists");
-    }
-
-    let token = await PwdResetModel.findOne({
-      userId: user._id,
-    });
-    if (token) await token.deleteOne();
-
-    const Document = await generateToken();
-    await  new PwdResetModel({...Document}).save();
-    const jwtsignedDoc = jwt.sign(Document,"Thisisthemonkey")
-    const generateLink = await generateLink("http://localhost:4000",'passwordReset',jwtsignedDoc);
-    console.log(generateLink)
-    await sendmail({
-      from: '"Code Kavya👻" <noreply@codekavya.com>',
-      to: req.body.email,
-      subject: "Verify your email at PU.io",
-      text: "test",
-      html: passwordResetMailHTML(user.Name, generateLink),
-    });
-
-    res.send({ status: "Email Send Sucessfullly" });
-  } catch (E) {
-    res.send({
-      Error: E.message,
-    });
-  }
-};
 
 
 

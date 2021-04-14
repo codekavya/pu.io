@@ -1,6 +1,3 @@
-
-
-
 import { Router, urlencoded } from "express";
 import auth from "../auth/auth.js";
 
