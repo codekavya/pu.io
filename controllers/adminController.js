@@ -11,7 +11,7 @@ import { verificationMailHTML } from "../Utils/mailconstructor.js";
 import { generateLink, generateToken } from "../Utils/generator.js";
 import UserVerifictionModel from "../models/userVeificationModel.js";
 import api_Key_Generator from "../auth/apiFormHandler.js";
-import { decode } from "punycode";
+import bcrypt from "bcryptjs";
 import EmailVerificationModel from "../models/userVeificationModel.js";
 
 //isEmail Verified and isUserVerified
