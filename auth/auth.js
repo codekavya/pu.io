@@ -7,7 +7,7 @@ import { AUTH_TYPE } from "../Utils/constants.js";
 const auth = (type = "") => async (req, res, next) => {
   try {
     // if (!req.header("Authorization")) throw new Error("No Auth Header");
-    const token = req.header("Authorization").replace("SKey=Bearer ", "");
+    const token = req.header("Authorization").replace("Bearer ", "");
     const payload = verify(token, "thisisdemokey");
     const user = await adminModels.findOne({
       _id: payload._id,
@@ -19,7 +19,7 @@ const auth = (type = "") => async (req, res, next) => {
     if (!user.isEmailVerified) {
       throw new Error("Verify your Email first....");
     }
-    
+
     req.token = token;
     req.user = user;
     return next();
