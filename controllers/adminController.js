@@ -4,7 +4,6 @@ import apiCounts from "../models/apiModels.js";
 import User from "../models/adminModels.js";
 import classrooms from "../models/classrooms.js";
 import PwdResetModel from "../models/passwordResetModel.js";
-import jwt from "jsonwebtoken";
 import { sendmail } from "../Services/mailer.js";
 import { passwordResetMailHTML } from "../Utils/mailconstructor.js";
 import path from "path";
