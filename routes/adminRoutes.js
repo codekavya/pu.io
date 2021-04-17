@@ -1,6 +1,6 @@
 import { Router, urlencoded } from "express";
 import auth from "../auth/auth.js";
-
+import checkRole from "../auth/checkRole.js";
 import resetPasswordHandler, {
   deleteUser,
   updateUser,
@@ -14,7 +14,7 @@ import resetPasswordHandler, {
   EmailVerification,
 } from "../controllers/adminController.js";
 import formHandler from "../auth/apiFormHandler.js";
-import { AUTH_TYPE } from "../Utils/constants.js";
+import { AUTH_TYPE, USER_ROLES } from "../Utils/constants.js";
 
 const router = Router();
 
@@ -55,8 +55,18 @@ router.get("/user/me", auth(AUTH_TYPE.TOKEN), async (req, res) => {
 router.post("/user/logout", auth(AUTH_TYPE.TOKEN), postLogoutUsers);
 router.post("/user/logout/all", auth(AUTH_TYPE.TOKEN), postLogoutAllSession);
 
-router.delete("/users/:id", auth(AUTH_TYPE.TOKEN), deleteUser);
-router.patch("/users/:id", auth(AUTH_TYPE.TOKEN), updateUser);
+router.delete(
+  "/users/:id",
+  auth(AUTH_TYPE.TOKEN),
+  checkRole([USER_ROLES.SUPER_ADMIN]),
+  deleteUser
+);
+router.patch(
+  "/users/:id",
+  auth(AUTH_TYPE.TOKEN),
+  checkRole([USER_ROLES.SUPER_ADMIN]),
+  updateUser
+);
 router.post("/reqreset", resetPassword);
 router.post("/passwordReset/:id", resetPasswordHandler);
 router.get("/passwordReset/:id", resetPasswordHandler);

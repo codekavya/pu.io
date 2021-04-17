@@ -180,8 +180,8 @@ export async function deleteUser(req, res, next) {
     const usertoDelete = await Users.findByIdAndDelete(req.params.id);
     if (!usertoDelete) {
       return res.status(404).send("No user Found");
-      res.send(usertoDelete);
     }
+    res.send(usertoDelete);
   } catch (error) {
     return res.status(500).send({
       Error: E,
