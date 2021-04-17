@@ -27,12 +27,13 @@ app.use((req, res, next) => {
 app.use(mainRoutes);
 app.use(adminRoutes);
 app.use(chatRoutes);
+
 app.use((req, res) => {
   console.log(req.originalUrl);
   return res.status(404).send({ Error: "Page not found" });
 });
-const server = http.createServer(app);
 
+const server = http.createServer(app);
 export const io = new socketio.Server();
 io.attach(server);
 

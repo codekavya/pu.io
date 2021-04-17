@@ -9,7 +9,7 @@ import { passwordResetMailHTML } from "../Utils/mailconstructor.js";
 import path from "path";
 import { verificationMailHTML } from "../Utils/mailconstructor.js";
 import { generateLink, generateToken } from "../Utils/generator.js";
-import UserVerifictionModel from "../models/userVeificationModel.js";
+import UserVerificationModel from "../models/userVeificationModel.js";
 import api_Key_Generator from "../auth/apiFormHandler.js";
 import bcrypt from "bcryptjs";
 import EmailVerificationModel from "../models/userVeificationModel.js";
@@ -19,14 +19,17 @@ export async function postUserSignUp(req, res) {
   const user = new Users(req.body);
   try {
     const Document = await generateToken(user);
+    const classroom = await classrooms.findById(req.body.classroom);
+    if (!classroom) {
+      return res.status(404).send({ Error: "Invalid classroom id" });
+    }
     await user.save();
-    const verificationDoc = new UserVerifictionModel({ ...Document });
+    const verificationDoc = new UserVerificationModel({ ...Document });
     await verificationDoc.save();
-    const jwtsignedDoc = jwt.sign(Document, "Thisisthemonkey");
     const link = await generateLink(
       "http://localhost:4000",
       "verifyEmail",
-      jwtsignedDoc.toString()
+      Document.token
     );
 
     await sendmail({
@@ -179,7 +182,7 @@ export async function deleteUser(req, res, next) {
   try {
     const usertoDelete = await Users.findByIdAndDelete(req.params.id);
     if (!usertoDelete) {
-      return res.status(404).send("No user Found");
+      return res.status(404).send({ Error: "No user Found" });
     }
     res.send(usertoDelete);
   } catch (error) {
@@ -219,22 +222,18 @@ export async function postLogoutUsers(req, res, next) {
   }
 }
 export const EmailVerification = async (req, res, next) => {
-  const reqBodyPayLoad = req.params.id;
+  const verifyToken = req.params.id;
   try {
-    const decodedVerificationDoc = jwt.decode(
-      reqBodyPayLoad,
-      "Thisisthemonkey"
-    );
     const emailVerificationDoc = await EmailVerificationModel.findOne({
-      userId: decodedVerificationDoc.userId,
+      token: verifyToken,
     });
     if (!emailVerificationDoc) {
       throw new Error("Invalid Link!!!");
     }
-    const user = await Users.findById(decodedVerificationDoc.userId);
+    const user = await Users.findById(emailVerificationDoc.userId);
     user.isEmailVerified = true;
     await user.save();
-    res.status(200).send("Email Verified Succesfully");
+    res.status(200).send({ message: "Email Verified Succesfully" });
     await emailVerificationDoc.deleteOne();
   } catch (E) {
     res.status(404).send({
@@ -245,19 +244,13 @@ export const EmailVerification = async (req, res, next) => {
 
 export default async function resetPasswordHandler(req, res, next) {
   //jwt payload need to be decrypted
-  const reqBodyPayLoad = req.params.id;
+  const resetToken = req.params.id;
   try {
-    const decodedPwdResetDoc = jwt.decode(reqBodyPayLoad, "Thisisthemonkey");
     const passwordResetDoc = await PwdResetModel.findOne({
-      userId: decodedPwdResetDoc.userId,
+      token: resetToken,
     });
 
     if (!passwordResetDoc) {
-      throw new Error("Invalid or Link Expired ok");
-    }
-    const isValid =
-      decodedPwdResetDoc.token.toString() === passwordResetDoc.token.toString();
-    if (!isValid) {
       throw new Error("Invalid or Link Expired ok");
     }
     if (req.method == "GET") {

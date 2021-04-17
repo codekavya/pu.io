@@ -1,10 +1,9 @@
 import express from "express";
 const { Router } = express;
 import events from "../../models/events.js";
-import colleges from "../../models/schoolsandcolleges.js";
-import classrooms from "../../models/classrooms.js";
 import checkRole from "../../auth/checkRole.js";
 import { USER_ROLES } from "../../Utils/constants.js";
+import clubs from "../../models/clubsinfo.js";
 
 const router = Router();
 
@@ -78,12 +77,17 @@ export async function getMyEvents(req, res) {
 }
 
 export async function createEvent(req, res) {
-  const user = await req.user.populate("classroom").execPopulate();
-  const college = await colleges.findById(user.classroom.college._id);
+  const user = await req.user.populate("clubs").execPopulate();
   console.log(college);
+  const club = clubs.findById(req.body.club);
+  if (!club) {
+    return res.status(404).send({
+      Error: "No Such Club found",
+    });
+  }
   const collegeNotice = new collegeNotices({
     ...req.body,
-    college: college._id,
+
     creator: user._id,
   });
   try {
@@ -99,29 +103,33 @@ export async function createEvent(req, res) {
 }
 export async function deleteEvent(req, res) {
   try {
-    const noticeToBeDeleted = await collegeNotices.findOne({
+    const noticeToBeDeleted = await events.findOne({
       _id: req.params.id,
     });
     if (!noticeToBeDeleted)
       return res.status(404).send({
-        Error: "No Such Notice found. It might have been already deleted",
+        Error: "No Such Event found. It might have been already deleted",
       });
-    const fullUser = await req.user.populate("classroom").execPopulate();
+    const noticeWithClub = await noticeToBeDeleted
+      .populate("club")
+      .execPopulate();
     if (
       !(
         req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
-        noticeToBeDeleted.college._id.toString() ===
-          fullUser.classroom.college._id.toString()
+        noticeWithClub.club.committee.some(
+          (member) =>
+            member.member.includes(req.user._id) && member.canPostEvent
+        )
       )
     ) {
       return res
         .status(401)
-        .send({ Error: "You cannot delete notice from other colleges" });
+        .send({ Error: "You do not have the permission to delete this event" });
     }
-    const collegeNotice = await collegeNotices.findByIdAndDelete(req.params.id);
+    const event = await events.findByIdAndDelete(req.params.id);
 
-    if (!collegeNotice) return res.status(404).send("No items Found");
-    res.send({ message: "collegeNotice deleted" });
+    if (!event) return res.status(404).send({ Error: "No items Found" });
+    res.send({ message: "event deleted" });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ Error: error });
@@ -161,7 +169,6 @@ export async function updateEvent(req, res) {
     return res.status(500).send({ Error: error });
   }
 }
-
 router.get("/all", checkRole([USER_ROLES.SUPER_ADMIN]), getEvents);
 router.get("/all/:id", getEvent);
 router.get("/", getMyEvents);
