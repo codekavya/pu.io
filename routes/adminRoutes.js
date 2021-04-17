@@ -61,12 +61,7 @@ router.delete(
   checkRole([USER_ROLES.SUPER_ADMIN]),
   deleteUser
 );
-router.patch(
-  "/users/:id",
-  auth(AUTH_TYPE.TOKEN),
-  checkRole([USER_ROLES.SUPER_ADMIN]),
-  updateUser
-);
+router.patch("/users/:id", auth(AUTH_TYPE.TOKEN), updateUser);
 router.post("/reqreset", resetPassword);
 router.post("/passwordReset/:id", resetPasswordHandler);
 router.get("/passwordReset/:id", resetPasswordHandler);
