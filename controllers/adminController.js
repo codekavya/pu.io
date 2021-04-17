@@ -193,7 +193,7 @@ export async function deleteUser(req, res, next) {
 }
 
 export async function updateUser(req, res, next) {
-  const isallowed = ["Name", "Password", "Username"];
+  const isallowed = ["Name", "Username"];
   const entity = Object.keys(req.body);
   const isValid = entity.every((data) => isallowed.includes(data));
   if (!isValid) return res.status(401).send({ Error: "Invalid Operation" });
