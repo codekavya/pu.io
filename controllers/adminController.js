@@ -261,7 +261,7 @@ export default async function resetPasswordHandler(req, res, next) {
     const password2 = req.body.password2;
     if (password1 !== password2) throw new Error("Password Doesnot Match");
     const hash = await bcrypt.hash(password1, Number(8));
-    const user = await User.findByIdAndUpdate(decodedPwdResetDoc.userId, {
+    const user = await User.findByIdAndUpdate(passwordResetDoc.userId, {
       Password: hash,
     });
     await PwdResetModel.findByIdAndDelete(passwordResetDoc._id);
