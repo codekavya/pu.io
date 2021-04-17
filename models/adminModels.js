@@ -57,10 +57,6 @@ const userSchema = new Schema(
       trim: true,
       unique: true,
       required: [true, "Email Address is Required"],
-      match: [
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})$/,
-        "at least one lowercase letter, one uppercase letter, one digit, one special character, and at least eight characters long",
-      ],
       validate(value) {
         if (!isEmail(value)) throw new Error("Invalid Email");
       },
