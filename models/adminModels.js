@@ -67,7 +67,7 @@ const userSchema = new Schema(
       required: [true, "Password is Needed"],
       minlength: 10,
       validate(value) {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/;
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{10,})/;
         if (!regex.test(value))
           throw new Error(
             "at least one lowercase letter, one uppercase letter, one digit, one special character, and at least eight characters long"
