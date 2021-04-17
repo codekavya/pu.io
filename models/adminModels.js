@@ -21,11 +21,11 @@ const userSchema = new Schema(
       default: PLACEHOLDER_IMAGES.PROFILE_PHOTO,
     },
 
-    isEmailVerified:{
-      type:Boolean,
-      default:false
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
     },
-    
+
     Username: {
       type: String,
       unique: true,
@@ -57,6 +57,10 @@ const userSchema = new Schema(
       trim: true,
       unique: true,
       required: [true, "Email Address is Required"],
+      match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})$/,
+        "at least one lowercase letter, one uppercase letter, one digit, one special character, and at least eight characters long",
+      ],
       validate(value) {
         if (!isEmail(value)) throw new Error("Invalid Email");
       },
@@ -65,7 +69,7 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       required: [true, "Password is Needed"],
-      minlength: 7,
+      minlength: 10,
       validate(value) {
         if (value.toLowerCase().includes("password"))
           throw new Error("Type Strong Password");
@@ -89,7 +93,8 @@ const userSchema = new Schema(
         required: false,
       },
     ],
-    clubs: [{ type: Schema.Types.ObjectId, ref: "clubs" }],
+    followingClubs: [{ type: Schema.Types.ObjectId, ref: "clubs" }],
+    managingClubs: [{ type: Schema.Types.ObjectId, ref: "clubs" }],
     classroom: { type: Schema.Types.ObjectId, ref: "classrooms" },
     api: { type: Schema.Types.ObjectId, ref: "apicounts" },
     chatRooms: [

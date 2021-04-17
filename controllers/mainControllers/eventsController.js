@@ -77,25 +77,21 @@ export async function getMyEvents(req, res) {
 }
 
 export async function createEvent(req, res) {
-  const user = await req.user.populate("clubs").execPopulate();
-  console.log(college);
   const club = clubs.findById(req.body.club);
   if (!club) {
     return res.status(404).send({
       Error: "No Such Club found",
     });
   }
-  const collegeNotice = new collegeNotices({
+  const event = new events({
     ...req.body,
-
     creator: user._id,
   });
   try {
-    await collegeNotice.save();
-    console.log(college.notices);
-    college.notices.push(collegeNotice);
-    await college.save();
-    res.send({ collegeNotice });
+    await event.save();
+    club.events.push(event);
+    await club.save();
+    res.send({ event });
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
@@ -103,22 +99,21 @@ export async function createEvent(req, res) {
 }
 export async function deleteEvent(req, res) {
   try {
-    const noticeToBeDeleted = await events.findOne({
+    const eventToBeDeleted = await events.findOne({
       _id: req.params.id,
     });
-    if (!noticeToBeDeleted)
+    if (!eventToBeDeleted)
       return res.status(404).send({
         Error: "No Such Event found. It might have been already deleted",
       });
-    const noticeWithClub = await noticeToBeDeleted
-      .populate("club")
-      .execPopulate();
+    const club = await clubs.findById(event.club._id);
     if (
       !(
         req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
-        noticeWithClub.club.committee.some(
+        club.committee.some(
           (member) =>
-            member.member.includes(req.user._id) && member.canPostEvent
+            member.member._id.toString() === req.user._id.toString() &&
+            member.canPostEvent
         )
       )
     ) {
@@ -137,33 +132,34 @@ export async function deleteEvent(req, res) {
 }
 export async function updateEvent(req, res) {
   try {
-    const noticeToBeUpdated = await collegeNotices.findOne({
+    const eventToBeUpdated = await events.findOne({
       _id: req.params.id,
     });
-
-    if (!noticeToBeUpdated)
+    if (!eventToBeUpdated)
       return res.status(404).send({
         Error: "No Such Notice found. It might have been already deleted",
       });
-    const fullUser = await req.user.populate("classroom").execPopulate();
+    const club = await clubs.findById(event.club._id);
     if (
       !(
         req.roles.includes(USER_ROLES.SUPER_ADMIN) ||
-        noticeToBeUpdated.college._id.toString() ===
-          fullUser.classroom.college._id.toString()
+        club.committee.some(
+          (member) =>
+            member.member._id.toString() === req.user._id.toString() &&
+            member.canPostEvent
+        )
       )
     ) {
       return res
         .status(401)
-        .send({ Error: "You cannot edit notice from other colleges" });
+        .send({ Error: "You cannot edit event from other clubs" });
     }
-    await collegeNotices.findByIdAndUpdate(req.params.id, req.body);
-
-    const collegeNotice = await collegeNotices.findOne({
+    await events.findByIdAndUpdate(req.params.id, req.body);
+    const updatedEvent = await events.findOne({
       _id: req.params.id,
     });
 
-    res.send({ collegeNotice });
+    res.send({ updatedEvent });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ Error: error });

@@ -35,7 +35,11 @@ export async function createClub(req, res) {
         throw new Error(`${element.member} doesn't exit.`);
       }
       if (element.canPostEvent === true) {
-        member.roles.push(USER_ROLES.CLUB_MANAGER);
+        !member.roles.includes(USER_ROLES.CLUB_MANAGER) &&
+          member.roles.push(USER_ROLES.CLUB_MANAGER);
+        member.managingClubs.push(club._id);
+      } else {
+        member.followingClubs.push(club._id);
       }
       committeeMembers.push(member);
       return { ...element, member: member._id };
@@ -47,10 +51,6 @@ export async function createClub(req, res) {
     });
     try {
       await club.save();
-      committeeMembers.forEach((member) => {
-        member.clubs.push(club._id);
-        member.save();
-      });
       return res.send({ club });
     } catch (error) {
       return res.status(500).send({ Error: error });
