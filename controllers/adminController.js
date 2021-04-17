@@ -213,9 +213,9 @@ export async function postLogoutUsers(req, res, next) {
       return token.token != req.token;
     });
     await req.user.save();
-    res.send();
+    return res.redirect(200, "/login");
   } catch (error) {
-    return res.status.send(500);
+    return res.status.send();
   }
 }
 export const EmailVerification = async (req, res, next) => {

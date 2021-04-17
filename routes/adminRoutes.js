@@ -24,8 +24,6 @@ router.use(
   })
 );
 
-
-
 router.get("/login", (req, res) => {
   res.send(
     '<form action="/signin" method="POST"><input type="email" name="Email" id="Email"><input type="password" name="Password" id="pwd"><button type="submit">Send</button></form>'
@@ -39,8 +37,7 @@ router.get("/form", (req, res, next) => {
 
 router.post("/signup", postUserSignUp);
 
-router.get("/verifyEmail/:id",EmailVerification)
-
+router.get("/verifyEmail/:id", EmailVerification);
 
 router.get("/key", auth(AUTH_TYPE.TOKEN), getApiKeyOrForm);
 
@@ -55,8 +52,8 @@ router.get("/user/me", auth(AUTH_TYPE.TOKEN), async (req, res) => {
   res.send(req.user);
 });
 
-router.post("user/logout", auth(AUTH_TYPE.TOKEN), postLogoutUsers);
-router.post("user/logout/all", auth(AUTH_TYPE.TOKEN), postLogoutAllSession);
+router.post("/user/logout", auth(AUTH_TYPE.TOKEN), postLogoutUsers);
+router.post("/user/logout/all", auth(AUTH_TYPE.TOKEN), postLogoutAllSession);
 
 router.delete("/users/:id", auth(AUTH_TYPE.TOKEN), deleteUser);
 router.patch("/users/:id", auth(AUTH_TYPE.TOKEN), updateUser);
