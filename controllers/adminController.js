@@ -74,11 +74,10 @@ export async function resetPassword(req, res, next) {
     const Document = await generateToken(user);
     const newResetDocument = new PwdResetModel({ ...Document });
     await newResetDocument.save();
-    const jwtsignedDoc = jwt.sign(Document, "Thisisthemonkey");
     const link = await generateLink(
       "http://localhost:4000",
       "passwordReset",
-      jwtsignedDoc.toString()
+      Document.token
     );
     await sendmail({
       from: '"Code Kavya👻" <noreply@codekavya.com>',
