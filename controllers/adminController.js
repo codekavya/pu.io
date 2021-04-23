@@ -191,6 +191,30 @@ export async function deleteUser(req, res, next) {
   }
 }
 
+
+
+
+export async function loggedinPasswordUpdate(req,res,next){
+  const newEnteredPassword = req.body.newPassword;
+  const oldEnteredPassword = req.body.oldPassword;
+  const hashedUserPassword = req.user.Password;
+  console.log(hashedUserPassword);
+
+ const isMatched =  await bcrypt.compare(oldEnteredPassword,hashedUserPassword)
+ if(!isMatched)
+  return res.status(401).send({
+    Error:"Invalid Old Password"
+  })
+
+  const newHashedPassword = await bcrypt.hash(newEnteredPassword,Number(8));
+  await Users.findByIdAndUpdate(req.user.id,{
+    Password:newHashedPassword
+  })
+  res.status(201).send({
+    msg:"Password Updated Sucessfully"
+  })
+}
+
 export async function updateUser(req, res, next) {
   const isallowed = ["Name", "Username"];
   const entity = Object.keys(req.body);
