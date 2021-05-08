@@ -43,20 +43,32 @@ export async function sendMessage(req, res, next) {
     const chatRoom = req.chatRoom;
     const loggedinUser = req.user;
 
-    io.once("connection", (socket) => {
+    io.on("connection", (socket) => {
         socket.on("room", async(roomid) => {
+            const members = await chatRoom.populate({
+                path: "RoomMembers",
+                select: ["Name", "isActive"]
+            }).execPopulate()
+
+
+
             const users = Utils.storeUsers({
                 id: loggedinUser._id.toString(),
                 username: loggedinUser.Name,
                 room: roomid,
             });
             socket.join(roomid);
-            const query = {
-                chatRoomName: chatRoom._id
-            };
+
+            if (!loggedinUser.isActive) {
+                loggedinUser.isActive = true;
+                await loggedinUser.save()
+            }
+            console.log(members.RoomMembers)
+            io.to(roomid).emit("userDetails", members.RoomMembers);
+            const query = { chatRoomName: req.chatRoom._id };
             const paginateOptions = {
                 page: 1,
-                limit: 20,
+                limit: 100,
                 populate: {
                     path: "messageBy",
                     select: "Name"
@@ -69,18 +81,18 @@ export async function sendMessage(req, res, next) {
             req.query.limit && (paginateOptions.limit = req.query.limit);
             //populate before sending
             const chatRoomMessages = await chatModels.paginate(query, paginateOptions)
-            console.log(chatRoomMessages);
             socket.emit("database-messages", chatRoomMessages.chats);
-
-
             socket.broadcast
                 .to(users.user.room)
                 .emit("message", `${req.user.Name} has joined the group`);
+
         });
+
 
         //get all message from clients and save to database and return to specific rooms
         socket.on("message", async(msg) => {
             const currentUser = Utils.findBy(loggedinUser._id.toString());
+            console.log("Came here", currentUser)
             const messageSendAt = new Date();
             const message = msg
             let messagetoDB = {
@@ -97,19 +109,28 @@ export async function sendMessage(req, res, next) {
             const newMessage = new MessageModel(messagetoDB);
             await newMessage.save();
 
-
             //send the message to specific room
             io.to(currentUser.room).emit("messageObj", messagetoClient);
+
         });
 
-        socket.on("disconnect", () => {
+        socket.on("disconnect", async() => {
             const removedUser = Utils.removeUser(loggedinUser.toString());
             if (removedUser) {
                 console.log(removedUser.room);
-                //remove users from the array set status to offline a boolean value
-                socket.broadcast
-                    .to(removedUser.room)
-                    .emit("message", `${removedUser.username} has left the group`);
+
+                //Change the status to offline
+                loggedinUser.isActive = false;
+                await loggedinUser.save()
+
+                //socket emit object of  users and there status
+                const members = await chatRoom.populate({
+                    path: "RoomMembers",
+                    select: ["Name", "isActive"]
+                }).execPopulate()
+                io.broadcast.to(removedUser.room).emit("userDetails", members.RoomMembers);
+
+
             }
         });
     });
@@ -118,7 +139,7 @@ export async function sendMessage(req, res, next) {
 
 export async function getLastIndexMessage(req, res, next) {
     try {
-        const populatedChatRoom = await chatRoom
+        const populatedChatRoom = await chatRooms.find({ chatRoomName: req.chatRoom._id })
             .populate({
                 path: "messages",
                 populate: {

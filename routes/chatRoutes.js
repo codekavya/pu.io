@@ -29,11 +29,12 @@ router.get('/allrooms', auth(), async(req, res, next) => {
 })
 
 //GET REQUEST TO .../rooms/?id=xyz 
-router.get("/room/:id", auth(), checkMember, async(req, res, next) => {
+router.get("/room", auth(), checkMember, async(req, res, next) => {
     try {
         res.sendFile(path.join(process.cwd(), "public", "chatbox.html"));
         next();
     } catch (E) {
+        console.log(E)
         res.send({ Error: E })
     }
 

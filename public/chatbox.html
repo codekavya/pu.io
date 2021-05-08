@@ -1,91 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Socket.IO chat</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
 
     <style>
-      body {
-        margin: 0;
-        padding-bottom: 3rem;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-      }
-
-      .emoji-trigger {
-        padding: 8px;
-        margin-top: 5px;
-        margin-left: -40px;
-      }
-
-      .send {
-        padding-left: 4px;
-      }
-
-      #form {
-        background: rgba(0, 0, 0, 0.15);
-        padding: 0.25rem;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        height: 3rem;
-        box-sizing: border-box;
-        backdrop-filter: blur(10px);
-      }
-
-      #input {
-        border: none;
-        padding: 0 1rem;
-        flex-grow: 1;
-        border-radius: 2rem;
-        margin: 0.25rem;
-      }
-
-      #input:focus {
-        outline: none;
-      }
-
-      #form > button {
-        background: #333;
-        border: none;
-        padding: 0 1rem;
-        margin: 0.25rem;
-        border-radius: 3px;
-        outline: none;
-        color: #fff;
-      }
-
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      #messages > li {
-        padding: 0.5rem 1rem;
-      }
-
-      #messages > li:nth-child(odd) {
-        background: #efefef;
-      }
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .emoji-trigger {
+            padding: 8px;
+            margin-top: 5px;
+            margin-left: -40px;
+        }
+        
+        .send {
+            padding-left: 4px;
+        }
+        
+        #form {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.25rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+        
+        #input {
+            border: none;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem;
+        }
+        
+        #input:focus {
+            outline: none;
+        }
+        
+        #form>button {
+            background: #333;
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #fff;
+        }
+        
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #messages>li {
+            padding: 0.5rem 1rem;
+        }
+        
+        #messages>li:nth-child(odd) {
+            background: #efefef;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" />
-      <button class="send">Send</button>
+        <input id="input" autocomplete="off" />
+        <button class="send">Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
-  </body>
-  <script type="module" src="../public/main.js"></script>
+</body>
+<script type="module" src="../public/main.js"></script>
+
 </html>
