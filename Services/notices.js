@@ -20,8 +20,10 @@ export async function getNotices(url, callback) {
           link: link,
         });
       });
+      if (!list.length) return callback(null);
       return callback(list);
     }
+    return callback(null);
   });
 }
 export async function getNoticeContent(url, callback) {
@@ -72,5 +74,6 @@ export async function getNoticeContent(url, callback) {
         attachments: attachments,
       });
     }
+    return callback(null);
   });
 }

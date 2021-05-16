@@ -8,6 +8,9 @@ export async function noticeController(req, res) {
     const { body } = req;
     const { url } = body;
     getNoticeContent(url, (notice) => {
+      if (!notice) {
+        return res.status(400).json({ Error: "Invalid url" });
+      }
       // console.log(notice);
       return res.json({
         timeStamp: Date.now(),
@@ -30,6 +33,9 @@ export async function categoryController(req, res) {
         ? baseUrl + `noticetype/${req.params.category}`
         : baseUrl + "notice";
     getNotices(url, (notices) => {
+      if (!notices) {
+        return res.status(400).json({ Error: "Bad request" });
+      }
       return res.json({
         timeStamp: Date.now(),
         notices: notices,
